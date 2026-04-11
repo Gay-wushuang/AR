@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.Rendering.Universal;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 /// <summary>
 /// 自动创建月球表面场景（优化版）
@@ -34,6 +37,12 @@ public class SetupMoonSurface : MonoBehaviour
 
     [Header("相机设置")]
     [SerializeField] private Vector3 cameraPosition = new Vector3(0f, 2f, -5f);
+    
+    [Header("🎯 智能缩放设置（保持视觉质量）")]
+    [Tooltip("你满意的视觉效果对应的 Scale（保持纹理清晰度）")]
+    [SerializeField] private float visualReferenceScale = 0.1f;
+    [Tooltip("你想要的有效覆盖范围（米）")]
+    [SerializeField] private float desiredEffectiveSize = 200f;
 
 #if UNITY_EDITOR
     [ContextMenu("创建月球场景")]
@@ -45,6 +54,130 @@ public class SetupMoonSurface : MonoBehaviour
         SetupCamera();
         Debug.Log("✅ 月球场景创建完成！（优化版）");
     }
+
+    [ContextMenu("🌙 智能缩放（正确逻辑）")]
+    public void SmartScaleGround_Correct()
+    {
+        var ground = GameObject.Find("MoonSurface");
+        if (ground == null)
+        {
+            Debug.LogWarning("未找到 MoonSurface，请先创建月球场景");
+            return;
+        }
+
+        // ========== 核心逻辑（修正版）==========
+        // 1. 保持几何 Scale = visualReferenceScale（你满意的视觉效果）
+        ground.transform.localScale = new Vector3(visualReferenceScale, 1f, visualReferenceScale);
+        
+        // 2. 计算当前几何尺寸
+        float currentGeometricSize = visualReferenceScale * 10f;  // Unity Plane 默认 10m
+        
+        // 3. 计算需要的纹理重复倍数
+        float tilingMultiplier = desiredEffectiveSize / currentGeometricSize;
+        
+        // ========== 应用修改 ==========
+        var renderer = ground.GetComponent<Renderer>();
+        if (renderer != null && renderer.material != null)
+        {
+            Material mat = renderer.material;
+            
+            // 设置纹理 Tiling（让纹理重复覆盖更大区域）
+            // 从 (1,1) 开始，乘以需要的倍数
+            Vector2 newTiling = new Vector2(tilingMultiplier, tilingMultiplier);
+            mat.mainTextureScale = newTiling;
+            
+            Debug.Log($"📐 智能缩放分析（修正逻辑）:");
+            Debug.Log($"   保持几何 Scale = {visualReferenceScale} → 实际几何尺寸 = {currentGeometricSize:F1}m");
+            Debug.Log($"   目标有效覆盖 = {desiredEffectiveSize:F1}m");
+            Debug.Log($"   纹理重复倍数 = {tilingMultiplier:F1}x");
+            Debug.Log($"✅ 材质 Tiling 已设置: ({newTiling.x:F1}, {newTiling.y:F1})");
+            
+            // 如果有 Normal Map，也同步调整
+            if (mat.HasProperty("_BumpMap"))
+            {
+                mat.SetTextureScale("_BumpMap", newTiling);
+            }
+        }
+        
+        // ========== 调整地形噪声（让起伏也匹配新范围）==========
+        AdjustTerrainForNewScale(tilingMultiplier);
+        
+        Debug.Log($"✅ 月球表面智能缩放完成！");
+        Debug.Log($"   Scale 保持 = {visualReferenceScale} (视觉不变)");
+        Debug.Log($"   有效覆盖 = {desiredEffectiveSize}m");
+        Debug.Log($"   纹理清晰度 = 不变 (Tiling 自动调整)");
+        
+        EditorUtility.SetDirty(ground);
+    }
+    
+    private void AdjustTerrainForNewScale(float scaleMultiplier)
+    {
+        // 当地面"逻辑上"变大时，需要调整地形噪声以保持视觉效果
+        // 我们需要增大 terrainScale 和 terrainHeight
+        
+        terrainScale = terrainScale * Mathf.Sqrt(scaleMultiplier);
+        terrainScale = Mathf.Min(terrainScale, 100f);  // 上限保护
+        Debug.Log($"   地形 noise scale: {terrainScale:F1}");
+        
+        terrainHeight = terrainHeight * Mathf.Sqrt(scaleMultiplier);
+        terrainHeight = Mathf.Min(terrainHeight, 3f);  // 上限保护
+        Debug.Log($"   地形 height: {terrainHeight:F2}m");
+        
+        // 重新应用地形（需要重新生成 mesh）
+        Debug.Log("💡 提示：地形参数已调整。如需看到效果，请点击'清除场景'然后'创建月球场景'重新生成");
+    }
+
+    [ContextMenu("📊 显示当前诊断")]
+    public void DiagnoseCurrentGround()
+    {
+        var ground = GameObject.Find("MoonSurface");
+        if (ground == null)
+        {
+            Debug.Log("\n🌙 MoonSurface: ❌ 未找到");
+            return;
+        }
+
+        Vector3 scale = ground.transform.localScale;
+        float actualSizeX = scale.x * 10f;
+        float actualSizeZ = scale.z * 10f;
+        
+        var renderer = ground.GetComponent<Renderer>();
+        Vector2 tiling = Vector2.one;
+        if (renderer != null && renderer.material != null)
+        {
+            tiling = renderer.material.mainTextureScale;
+        }
+
+        Debug.Log("\n" + "=".PadRight(60, '='));
+        Debug.Log("📊 MoonSurface 诊断报告");
+        Debug.Log("=".PadRight(60, '='));
+        Debug.Log($"   几何 Scale: ({scale.x:F3}, {scale.y:F3}, {scale.z:F3})");
+        Debug.Log($"   实际几何尺寸: {actualSizeX:F1}m × {actualSizeZ:F1}m");
+        Debug.Log($"   纹理 Tiling: ({tiling.x:F1}, {tiling.y:F1})");
+        Debug.Log($"   有效纹理覆盖: {actualSizeX * tiling.x:F1}m × {actualSizeZ * tiling.y:F1}m");
+        
+        bool isSmall = actualSizeX * tiling.x < 50f;
+        bool isTextureStretched = actualSizeX > 20f && tiling.x <= 1f;
+        
+        if (isSmall)
+        {
+            Debug.Log($"   ⚠️  问题：有效覆盖太小");
+            Debug.Log($"   💡 解决：使用'🌙 智能缩放（正确逻辑）'");
+        }
+        else if (isTextureStretched)
+        {
+            Debug.Log($"   ❌ 严重问题：纹理被拉伸！");
+            Debug.Log($"   💡 当前状态：{actualSizeX:F0}m 地面只用 {tiling.x:F1} 个纹理实例");
+            Debug.Log($"   💡 推荐：使用'🌙 智能缩放（正确逻辑）'自动调整");
+        }
+        else
+        {
+            Debug.Log($"   ✅ 状态良好：尺寸与纹理密度协调");
+        }
+        
+        Debug.Log("=".PadRight(60, '='));
+    }
+#endif
 
     private void CreateGround()
     {
@@ -103,7 +236,6 @@ public class SetupMoonSurface : MonoBehaviour
         }
 
         material.SetFloat("_Metallic", 0.0f);
-        material.renderPriority = 1;
         material.doubleSidedGI = true;
 
         var renderer = ground.GetComponent<Renderer>();
@@ -267,6 +399,7 @@ public class SetupMoonSurface : MonoBehaviour
         }
     }
 
+#if UNITY_EDITOR
     [ContextMenu("清除场景")]
     public void ClearScene()
     {
@@ -279,6 +412,18 @@ public class SetupMoonSurface : MonoBehaviour
         if (probe != null) UnityEditor.EditorApplication.delayCall += () => DestroyImmediate(probe);
 
         Debug.Log("🗑️ 场景已清除");
+    }
+    
+    [ContextMenu("🔄 重置推荐值")]
+    public void ResetRecommendedValues()
+    {
+        visualReferenceScale = 0.1f;
+        desiredEffectiveSize = 200f;
+        groundSize = 200f;
+        terrainHeight = 0.3f;
+        terrainScale = 8f;
+        
+        Debug.Log("✅ 已重置为推荐值");
     }
 #endif
 }
