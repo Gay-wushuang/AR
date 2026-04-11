@@ -63,19 +63,24 @@ public class SetupMoonSurface : MonoBehaviour
         ApplySmoothTerrain(ground);
 
         var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
-        material.name = "MoonMaterial_Optimized";
+        material.name = "MoonMaterial_Regolith";
 
         if (moonDiffuse != null)
         {
             material.mainTexture = moonDiffuse;
+            material.color = new Color(0.75f, 0.73f, 0.70f);
             Debug.Log($"应用漫反射贴图: {moonDiffuse.name}");
+        }
+        else
+        {
+            material.color = new Color(0.45f, 0.43f, 0.40f);
         }
 
         if (moonNormal != null)
         {
             material.SetTexture("_BumpMap", moonNormal);
             material.EnableKeyword("_NORMALMAP");
-            material.SetFloat("_BumpScale", 1.5f);
+            material.SetFloat("_BumpScale", 2.0f);
         }
 
         if (moonRoughness != null)
@@ -83,22 +88,30 @@ public class SetupMoonSurface : MonoBehaviour
             material.SetTexture("_MetallicGlossMap", moonRoughness);
             material.EnableKeyword("_METALLICSPECGLOSSMAP");
             material.SetFloat("_GlossMapScale", 0.0f);
+            material.SetFloat("_Smoothness", 0.0f);
+        }
+        else
+        {
+            material.SetFloat("_Smoothness", 0.0f);
         }
 
         if (moonDisplacement != null)
         {
             material.SetTexture("_ParallaxMap", moonDisplacement);
             material.EnableKeyword("_PARALLAXMAP");
-            material.SetFloat("_Parallax", 0.02f);
-            Debug.Log($"应用位移贴图（低强度）: {moonDisplacement.name}");
+            material.SetFloat("_Parallax", 0.005f);
         }
 
-        material.color = groundColor;
-        material.SetFloat("_Smoothness", 0.05f);
         material.SetFloat("_Metallic", 0.0f);
-        ground.GetComponent<Renderer>().material = material;
+        material.renderPriority = 1;
+        material.doubleSidedGI = true;
 
-        Debug.Log($"✅ 月球表面创建完成 | 网格细分: {groundSubdivisions}x{groundSubdivisions} | 顶点数: {(groundSubdivisions+1)*(groundSubdivisions+1)}");
+        var renderer = ground.GetComponent<Renderer>();
+        renderer.material = material;
+        renderer.shadowCastingMode = UnityEngine.Rendering.ShadowCastingMode.On;
+        renderer.receiveShadows = true;
+
+        Debug.Log($"✅ 月球表面创建完成 | 月壤质感模式 | 网格细分: {groundSubdivisions}x{groundSubdivisions} | 顶点数: {(groundSubdivisions+1)*(groundSubdivisions+1)}");
     }
 
     private void SubdivideMesh(GameObject ground)
@@ -202,21 +215,21 @@ public class SetupMoonSurface : MonoBehaviour
         var lightGO = new GameObject("SunLight");
         var light = lightGO.AddComponent<Light>();
         light.type = LightType.Directional;
-        light.color = new Color(1f, 0.98f, 0.95f);
+        light.color = new Color(1f, 0.99f, 0.98f);
         light.intensity = sunIntensity;
         light.shadows = LightShadows.Soft;
         light.shadowResolution = UnityEngine.Rendering.LightShadowResolution.High;
-        light.shadowStrength = 0.7f;
+        light.shadowStrength = 0.9f;
 
         lightGO.transform.rotation = Quaternion.Euler(sunRotation);
 
-        Debug.Log("✅ 太阳光创建完成（高质量阴影）");
+        Debug.Log("✅ 太阳光创建完成（月球高对比度模式）");
     }
 
     private void SetupAmbientLight()
     {
-        RenderSettings.ambientSkyColor = ambientColor * ambientIntensity;
-        RenderSettings.ambientIntensity = ambientIntensity;
+        RenderSettings.ambientSkyColor = new Color(0.02f, 0.02f, 0.025f);
+        RenderSettings.ambientIntensity = 0.3f;
 
         var probeGO = GameObject.Find("SceneReflectionProbe");
         if (probeGO == null)
@@ -224,12 +237,12 @@ public class SetupMoonSurface : MonoBehaviour
             probeGO = new GameObject("SceneReflectionProbe");
             var probe = probeGO.AddComponent<ReflectionProbe>();
             probe.resolution = 256;
-            probe.backgroundColor = new Color(0.05f, 0.05f, 0.08f, 1f);
+            probe.backgroundColor = new Color(0.01f, 0.01f, 0.015f, 1f);
             probe.size = new Vector3(50f, 20f, 50f);
             probe.blendDistance = 5f;
         }
 
-        Debug.Log("✅ 环境光和反射探针已配置");
+        Debug.Log("✅ 环境光和反射探针已配置（低强度太空模式）");
     }
 
     private void SetupCamera()
