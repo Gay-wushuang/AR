@@ -24,7 +24,7 @@ public class EnhanceMoonScene : MonoBehaviour
     [SerializeField] private Vector2 rockScaleRange = new Vector2(0.5f, 3f);
 
     [Header("岩石形状")]
-    [SerializeField] private float rockIrregularity = 0.05f;
+    [SerializeField] private float rockIrregularity = 0.25f;
 
     [Header("随机种子")]
     [SerializeField] private int randomSeed = 42;
@@ -73,83 +73,76 @@ public class EnhanceMoonScene : MonoBehaviour
     {
         int rockTypeIndex = rng.Next(0, 7);  // 0~6 对应 rock_01~07
 
-        // 使用球体作为岩石基础形状（更自然的月球岩石外观）
-        var rock = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+        // 只使用 Cube
+        var rock = GameObject.CreatePrimitive(PrimitiveType.Cube);
         rock.name = $"Rock_{rockTypeIndex + 1:D2}_{parent.childCount}";
         rock.transform.parent = parent;
 
         // 随机位置（圆形分布）
         float angle = (float)(rng.NextDouble() * 2 * Mathf.PI);
         float radius = (float)(rng.NextDouble() * scatterRadius);
-        float posX = Mathf.Cos(angle) * radius;
-        float posZ = Mathf.Sin(angle) * radius;
-
-        // 采样地面高度，防止浮空
-        float groundY = SampleGroundHeight(posX, posZ);
-
         rock.transform.position = new Vector3(
-            posX,
-            groundY,
-            posZ
+            Mathf.Cos(angle) * radius,
+            0.5f,
+            Mathf.Sin(angle) * radius
         );
 
-        // 随机旋转（球形可以任意旋转）
+        // X/Z轴旋转减少，避免石头立起来；Y轴依然完全随机
         rock.transform.rotation = Quaternion.Euler(
-            (float)(rng.NextDouble() * 360f),
-            (float)(rng.NextDouble() * 360f),
-            (float)(rng.NextDouble() * 360f)
+            (float)(rng.NextDouble() * 45f),   // X轴：0-45°（不立起来）
+            (float)(rng.NextDouble() * 360f),  // Y轴：0-360°（完全随机）
+            (float)(rng.NextDouble() * 45f)     // Z轴：0-45°（不立起来）
         );
 
-        // 球形岩石：均匀缩放 + 轻微不规则变形
+        // 自然的岩石比例（略扁）
         float baseScale = Mathf.Lerp(rockScaleRange.x, rockScaleRange.y, (float)rng.NextDouble());
         rock.transform.localScale = new Vector3(
-            baseScale * (0.8f + (float)rng.NextDouble() * 0.4f),   // X: 0.8 ~ 1.2
-            baseScale * (0.8f + (float)rng.NextDouble() * 0.4f),   // Y: 0.8 ~ 1.2（球形不压扁）
-            baseScale * (0.8f + (float)rng.NextDouble() * 0.4f)    // Z: 0.8 ~ 1.2
+            baseScale * (0.7f + (float)rng.NextDouble() * 0.6f),   // X: 0.7 ~ 1.3
+            baseScale * (0.5f + (float)rng.NextDouble() * 0.4f),   // Y: 0.5 ~ 0.9（自然扁平）
+            baseScale * (0.7f + (float)rng.NextDouble() * 0.6f)    // Z: 0.7 ~ 1.3
         );
 
-        // 轻微的几何顶点扰动，让形状更自然
-        DistortRockMesh(rock, rng);
+        // 正确的顶点随机扰动（沿法线方向 + 复制 mesh + 控制强度）
+        MakeIrregularCube(rock, rockIrregularity, rng);
 
         // 应用对应岩石的完整 PBR 材质
         ApplyRockMaterial(rock, rockTypeIndex, rng);
     }
 
     /// <summary>
-    /// 采样月球地面的高度，让岩石贴合地形表面
+    /// 正确的顶点随机扰动方法（沿法线方向 + 复制 mesh + 控制强度）
     /// </summary>
-    private float SampleGroundHeight(float x, float z)
+    private void MakeIrregularCube(GameObject cube, float strength, System.Random rng)
     {
-        var ground = GameObject.Find("MoonSurface");
-        if (ground == null) return 0f;
+        var meshFilter = cube.GetComponent<MeshFilter>();
+        var mesh = Instantiate(meshFilter.sharedMesh); // 必须复制 mesh，避免修改原始资源
+        meshFilter.sharedMesh = mesh;
 
-        var meshFilter = ground.GetComponent<MeshFilter>();
-        if (meshFilter == null || meshFilter.sharedMesh == null) return 0f;
-
-        // 将世界坐标转换到地面局部坐标
-        Vector3 localPos = ground.transform.InverseTransformPoint(new Vector3(x, 0, z));
-        Mesh mesh = meshFilter.sharedMesh;
-        Vector3[] vertices = mesh.vertices;
-
-        // 找到最近的顶点并采样其高度
-        float minDistSq = float.MaxValue;
-        float height = 0f;
+        var vertices = mesh.vertices;
 
         for (int i = 0; i < vertices.Length; i++)
         {
-            float dx = vertices[i].x - localPos.x;
-            float dz = vertices[i].z - localPos.z;
-            float distSq = dx * dx + dz * dz;
+            Vector3 v = vertices[i];
 
-            if (distSq < minDistSq)
-            {
-                minDistSq = distSq;
-                height = vertices[i].y;
-            }
+            // 关键1：朝"外"扰动（沿法线方向，避免炸裂）
+            Vector3 dir = v.normalized;
+
+            // 关键2：随机强度（控制在合理范围内）
+            float offset = (float)(rng.NextDouble() - 0.5f) * strength;
+
+            // 关键3：叠加一点非规则扰动（幅度更小）
+            Vector3 random = new Vector3(
+                (float)(rng.NextDouble() - 0.5f),
+                (float)(rng.NextDouble() - 0.5f),
+                (float)(rng.NextDouble() - 0.5f)
+            ) * strength * 0.3f;
+
+            vertices[i] = v + dir * offset + random;
         }
 
-        // 转换回世界坐标系的高度
-        return ground.transform.position.y + height * ground.transform.localScale.y;
+        mesh.vertices = vertices;
+        mesh.RecalculateNormals();
+        mesh.RecalculateBounds();
     }
 
     private void ApplyRockMaterial(GameObject rock, int typeIndex, System.Random rng)
@@ -163,13 +156,16 @@ public class EnhanceMoonScene : MonoBehaviour
             var rm = rockMaterials[typeIndex];
 
             if (rm.diffuse != null)
+            {
                 material.mainTexture = rm.diffuse;
+                // 移除颜色 tint，让纹理本身的颜色自然显示
+            }
 
             if (rm.normal != null)
             {
                 material.SetTexture("_BumpMap", rm.normal);
                 material.EnableKeyword("_NORMALMAP");
-                material.SetFloat("_BumpScale", 0.3f);  // 法线强度改回 0.3，更合理！
+                material.SetFloat("_BumpScale", 0.3f);
             }
 
             // 暂时禁用 roughness 贴图（在 URP 里需要转成 smoothness 才能用）
@@ -181,7 +177,7 @@ public class EnhanceMoonScene : MonoBehaviour
 
             // 直接设置固定的金属度和光滑度（更粗糙）
             material.SetFloat("_Metallic", 0f);
-            material.SetFloat("_Smoothness", 0.15f);  // 降低到 0.15，更粗糙！（数值越小越粗糙）
+            material.SetFloat("_Smoothness", 0.15f);
 
             // 禁用位移/视差贴图
             // if (rm.displacement != null)
@@ -199,33 +195,6 @@ public class EnhanceMoonScene : MonoBehaviour
         }
 
         rock.GetComponent<Renderer>().material = material;
-    }
-
-    /// <summary>
-    /// 对立方体网格做轻微随机扰动（幅度很小，不会变成刺猬）
-    /// </summary>
-    private void DistortRockMesh(GameObject rock, System.Random rng)
-    {
-        var meshFilter = rock.GetComponent<MeshFilter>();
-        var mesh = meshFilter.mesh;
-        var vertices = mesh.vertices;
-
-        // 扰动幅度很小（0.05-0.15），让形状稍微不规则一点，但不会变成刺猬
-        float distortAmount = 0.05f + (float)rng.NextDouble() * 0.1f;
-
-        for (int i = 0; i < vertices.Length; i++)
-        {
-            // 每个顶点独立的随机位移
-            vertices[i] += new Vector3(
-                ((float)rng.NextDouble() * 2f - 1f) * distortAmount,
-                ((float)rng.NextDouble() * 2f - 1f) * distortAmount,
-                ((float)rng.NextDouble() * 2f - 1f) * distortAmount
-            );
-        }
-
-        mesh.vertices = vertices;
-        mesh.RecalculateNormals();
-        mesh.RecalculateBounds();
     }
 
     [ContextMenu("清除岩石")]
