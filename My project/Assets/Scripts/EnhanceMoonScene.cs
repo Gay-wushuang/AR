@@ -73,8 +73,17 @@ public class EnhanceMoonScene : MonoBehaviour
     {
         int rockTypeIndex = rng.Next(0, 7);  // 0~6 对应 rock_01~07
 
-        // 使用 Cube 而不是 Sphere，避免球体法线插值导致的刺猬问题
-        var rock = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        // 方案2：混合使用多种 Primitive 类型（Cube, Sphere, Capsule），更自然的轮廓
+        PrimitiveType primitiveType;
+        int t = rng.Next(0, 3);
+        if (t == 0) 
+            primitiveType = PrimitiveType.Cube;
+        else if (t == 1) 
+            primitiveType = PrimitiveType.Sphere;
+        else 
+            primitiveType = PrimitiveType.Capsule;
+
+        var rock = GameObject.CreatePrimitive(primitiveType);
         rock.name = $"Rock_{rockTypeIndex + 1:D2}_{parent.childCount}";
         rock.transform.parent = parent;
 
@@ -87,19 +96,19 @@ public class EnhanceMoonScene : MonoBehaviour
             Mathf.Sin(angle) * radius
         );
 
-        // 随机旋转
+        // 方案1：更极端的旋转范围（0~180°，不再温柔）
         rock.transform.rotation = Quaternion.Euler(
-            (float)(rng.NextDouble() * 30),
-            (float)(rng.NextDouble() * 360),
-            (float)(rng.NextDouble() * 30)
+            (float)(rng.NextDouble() * 180f),
+            (float)(rng.NextDouble() * 360f),
+            (float)(rng.NextDouble() * 180f)
         );
 
-        // 随机非等比缩放（模拟不规则岩石形态）
+        // 方案1：更极端的缩放范围（更扁、更破碎感）
         float baseScale = Mathf.Lerp(rockScaleRange.x, rockScaleRange.y, (float)rng.NextDouble());
         rock.transform.localScale = new Vector3(
-            baseScale * (0.6f + (float)rng.NextDouble() * 0.8f),
-            baseScale * (0.4f + (float)rng.NextDouble() * 0.6f),  // 扁平
-            baseScale * (0.6f + (float)rng.NextDouble() * 0.8f)
+            baseScale * (0.4f + (float)rng.NextDouble() * 1.2f),  // 0.4 ~ 1.6
+            baseScale * (0.2f + (float)rng.NextDouble() * 0.6f),  // 0.2 ~ 0.8（更扁）
+            baseScale * (0.4f + (float)rng.NextDouble() * 1.2f)   // 0.4 ~ 1.6
         );
 
         // 暂时禁用几何顶点扰动，完全靠 PBR 纹理实现表面细节
