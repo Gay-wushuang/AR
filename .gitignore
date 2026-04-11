@@ -1,0 +1,149 @@
+# ============================================
+# Large Binary Assets — NOT tracked via Git!
+# ============================================
+# These large files are hosted on a shared cloud drive/network disk.
+# See README.md (📥 大文件下载与放置指南) for download and placement instructions.
+
+# Astronaut 3D assets (44MB GLB + textures)
+astronaut/
+
+# Moon 3D assets (1.8GB BLEND + textures)
+moon/
+
+# Main textures directory (moved to Assets/Models/... but keep for reference)
+textures/
+
+# My project/Assets/Models/ - large 3D files only (but keep .meta files!)
+# Note: .meta files are critical - DO NOT ignore them!
+My project/Assets/Models/astronaut/source/*.glb
+My project/Assets/Models/astronaut/source/*.gltf
+My project/Assets/Models/astronaut/source/*.fbx
+My project/Assets/Models/astronaut/textures/*.png
+My project/Assets/Models/astronaut/textures/*.jpg
+My project/Assets/Models/astronaut/textures/*.tga
+
+My project/Assets/Models/moon/*.blend
+My project/Assets/Models/moon/textures/*.png
+My project/Assets/Models/moon/textures/*.jpg
+My project/Assets/Models/moon/textures/*.tga
+
+# ============================================
+# Unity Generated
+# ============================================
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/[Ll]ogs/
+[Uu]ser[Ss]ettings/
+
+# Memory captures
+[Mm]emoryCaptures/
+
+# ============================================
+# OS Generated
+# ============================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ============================================
+# IDE / Editor
+# ============================================
+.vs/
+.vscode/
+*.csproj
+*.sln
+*.slnx
+*.unityproj
+
+# Rider
+.idea/
+
+# Visual Studio
+*.user
+*.userosscache
+*.suo
+*.cache
+*.dll
+*.pdb
+
+# ============================================
+# Build Output
+# ============================================
+[Oo]utput/
+[Dd]ebug/
+[Rr]elease/
+x64/
+x86/
+
+# ============================================
+# Logs
+# ============================================
+*.log
+Logs/
+
+# ============================================
+# Archive Files
+# ============================================
+*.zip
+*.rar
+*.7z
+*.tar.gz
+*.tar.bz2
+
+# ============================================
+# 3D / DCC Software (Blender, Maya, etc.)
+# ============================================
+
+# Blender auto-backup files (DO NOT commit these!)
+*.blend1
+*.blend2
+*.blend[0-9]*
+
+# Blender temporary files
+*.blend.tmp
+
+# Maya temp files
+*.mb.tmp
+*.ma.tmp
+
+# ============================================
+# Large Binary Assets — handled by Git LFS
+# ============================================
+# My project/Assets/ contains Unity assets (tracked via LFS)
+# Only ignore cache/generated directories inside My project/
+My project/Library/
+My project/Temp/
+My project/Obj/
+My project/Build/
+My project/Logs/
+My project/MemoryCaptures/
+My project/UserSettings/
+
+# Old asset locations (already moved to Assets/Models/, directories no longer exist)
+
+# If you need to commit specific Unity config files, add exceptions below:
+# !My project/Packages/manifest.json
+# !My project/ProjectSettings/
+
+# ============================================
+# Reference / Notes (optional - decide per project)
+# ============================================
+# *建议.md
+# *参考.md
+
+# ============================================
+# Windows System Files
+# ============================================
+nul
+con
+prn
+aux
+com[0-9]
+lpt[0-9]
