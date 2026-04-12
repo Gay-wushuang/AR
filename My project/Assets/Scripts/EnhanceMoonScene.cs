@@ -73,8 +73,8 @@ public class EnhanceMoonScene : MonoBehaviour
     {
         int rockTypeIndex = rng.Next(0, 7);  // 0~6 对应 rock_01~07
 
-        // 只使用 Cube
-        var rock = GameObject.CreatePrimitive(PrimitiveType.Cube);
+        // 使用 Sphere 作为基础形状，然后随机非均匀缩放变成椭圆
+        var rock = GameObject.CreatePrimitive(PrimitiveType.Sphere);
         rock.name = $"Rock_{rockTypeIndex + 1:D2}_{parent.childCount}";
         rock.transform.parent = parent;
 
@@ -87,23 +87,23 @@ public class EnhanceMoonScene : MonoBehaviour
             Mathf.Sin(angle) * radius
         );
 
-        // X/Z轴旋转减少，避免石头立起来；Y轴依然完全随机
+        // 球形可以任意旋转，不需要限制
         rock.transform.rotation = Quaternion.Euler(
-            (float)(rng.NextDouble() * 45f),   // X轴：0-45°（不立起来）
-            (float)(rng.NextDouble() * 360f),  // Y轴：0-360°（完全随机）
-            (float)(rng.NextDouble() * 45f)     // Z轴：0-45°（不立起来）
+            (float)(rng.NextDouble() * 360f),  // X轴：0-360°
+            (float)(rng.NextDouble() * 360f),  // Y轴：0-360°
+            (float)(rng.NextDouble() * 360f)   // Z轴：0-360°
         );
 
-        // 自然的岩石比例（略扁）
+        // 随机非均匀缩放，让球体变成椭圆（更自然的岩石形状）
         float baseScale = Mathf.Lerp(rockScaleRange.x, rockScaleRange.y, (float)rng.NextDouble());
         rock.transform.localScale = new Vector3(
-            baseScale * (0.7f + (float)rng.NextDouble() * 0.6f),   // X: 0.7 ~ 1.3
-            baseScale * (0.5f + (float)rng.NextDouble() * 0.4f),   // Y: 0.5 ~ 0.9（自然扁平）
-            baseScale * (0.7f + (float)rng.NextDouble() * 0.6f)    // Z: 0.7 ~ 1.3
+            baseScale * (0.6f + (float)rng.NextDouble() * 0.8f),   // X: 0.6 ~ 1.4
+            baseScale * (0.5f + (float)rng.NextDouble() * 0.6f),   // Y: 0.5 ~ 1.1
+            baseScale * (0.6f + (float)rng.NextDouble() * 0.8f)    // Z: 0.6 ~ 1.4
         );
 
-        // 正确的顶点随机扰动（沿法线方向 + 复制 mesh + 控制强度）
-        MakeIrregularCube(rock, rockIrregularity, rng);
+        // 完全禁用顶点扰动，避免面之间出现缝隙
+        // MakeIrregularRock(rock, 0.02f, rng);
 
         // 应用对应岩石的完整 PBR 材质
         ApplyRockMaterial(rock, rockTypeIndex, rng);
@@ -112,9 +112,9 @@ public class EnhanceMoonScene : MonoBehaviour
     /// <summary>
     /// 正确的顶点随机扰动方法（沿法线方向 + 复制 mesh + 控制强度）
     /// </summary>
-    private void MakeIrregularCube(GameObject cube, float strength, System.Random rng)
+    private void MakeIrregularRock(GameObject rock, float strength, System.Random rng)
     {
-        var meshFilter = cube.GetComponent<MeshFilter>();
+        var meshFilter = rock.GetComponent<MeshFilter>();
         var mesh = Instantiate(meshFilter.sharedMesh); // 必须复制 mesh，避免修改原始资源
         meshFilter.sharedMesh = mesh;
 

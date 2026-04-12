@@ -94,7 +94,18 @@ public class SetupMoonSurface : MonoBehaviour
 
         // 细分网格 + 应用地形起伏 + 直接在上面挖陨石坑！
         var meshFilter = ground.GetComponent<MeshFilter>();
-        meshFilter.sharedMesh = CreateHighPolyMesh(groundSize, scale);
+        var highPolyMesh = CreateHighPolyMesh(groundSize, scale);
+        meshFilter.sharedMesh = highPolyMesh;
+
+        // 更新碰撞器，强制 1:1 匹配视觉网格！
+        var meshCollider = ground.GetComponent<MeshCollider>();
+        if (meshCollider == null)
+        {
+            meshCollider = ground.AddComponent<MeshCollider>();
+        }
+        meshCollider.sharedMesh = highPolyMesh;
+        meshCollider.convex = false;  // 对于大型地形，不使用凸包更准确
+        meshCollider.cookingOptions = MeshColliderCookingOptions.None;  // 不简化
 
         // 创建材质
         var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));

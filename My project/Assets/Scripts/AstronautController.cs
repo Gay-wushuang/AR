@@ -15,8 +15,18 @@ public class AstronautController : MonoBehaviour
     public float groundCheckDistance = 0.1f;
     public LayerMask groundLayer;
 
-    [Header("References")]
+    [Header("Camera Settings")]
     public Transform cameraPivot;
+    public Camera mainCamera;
+    public bool useFirstPerson = true;
+    public Vector3 firstPersonOffset = new Vector3(0, 0, -0.14f);
+    public float cameraCollisionRadius = 0.3f;
+    public float minCameraDistance = 0.3f;
+    public float maxCameraDistance = 1.5f;
+    public LayerMask cameraCollisionLayer;
+
+    [Header("References")]
+    public Transform playerModel;
 
     private CharacterController controller;
     private AstronautAnimationController anim;
@@ -25,6 +35,9 @@ public class AstronautController : MonoBehaviour
     private float xRotation = 0f;
     private bool isActing = false;
     private bool isGrounded;
+    private float currentCameraDistance;
+    private SphereCollider cameraCollider;
+    private Vector3 initialCameraLocalPosition;
 
     void Start()
     {
@@ -38,13 +51,63 @@ public class AstronautController : MonoBehaviour
             groundLayer = LayerMask.GetMask("Default");
         }
 
+        if (cameraCollisionLayer == 0)
+        {
+            cameraCollisionLayer = LayerMask.GetMask("Default");
+        }
+
+        gameObject.layer = LayerMask.NameToLayer("Player");
+
+        if (playerModel != null)
+        {
+            playerModel.gameObject.layer = LayerMask.NameToLayer("Player");
+        }
+
+        SetupCameraCollision();
+
+        if (mainCamera != null)
+        {
+            initialCameraLocalPosition = mainCamera.transform.localPosition;
+        }
+
+        currentCameraDistance = maxCameraDistance;
+
         Debug.Log($"Ground Layer set to: {LayerMask.LayerToName((int)Mathf.Log(groundLayer.value, 2))}");
+    }
+
+    void SetupCameraCollision()
+    {
+        if (mainCamera == null)
+        {
+            mainCamera = Camera.main;
+        }
+
+        if (mainCamera != null)
+        {
+            cameraCollider = mainCamera.gameObject.GetComponent<SphereCollider>();
+            if (cameraCollider == null)
+            {
+                cameraCollider = mainCamera.gameObject.AddComponent<SphereCollider>();
+            }
+
+            cameraCollider.radius = cameraCollisionRadius;
+            cameraCollider.isTrigger = true;
+
+            Rigidbody rb = mainCamera.gameObject.GetComponent<Rigidbody>();
+            if (rb == null)
+            {
+                rb = mainCamera.gameObject.AddComponent<Rigidbody>();
+            }
+            rb.useGravity = false;
+            rb.isKinematic = true;
+        }
     }
 
     void Update()
     {
         CheckGrounded();
         HandleMouseLook();
+        HandleCameraCollision();
         HandleMovement();
         HandleAction();
     }
@@ -81,6 +144,38 @@ public class AstronautController : MonoBehaviour
             cameraPivot.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         }
         transform.Rotate(Vector3.up * mouseX);
+    }
+
+    void HandleCameraCollision()
+    {
+        if (cameraPivot == null || mainCamera == null) return;
+
+        if (useFirstPerson)
+        {
+            mainCamera.transform.localRotation = Quaternion.identity;
+        }
+        else
+        {
+            Vector3 targetCameraPosition = cameraPivot.position - cameraPivot.forward * maxCameraDistance;
+            Vector3 direction = targetCameraPosition - cameraPivot.position;
+            float distance = direction.magnitude;
+
+            RaycastHit hit;
+            int playerLayer = LayerMask.GetMask("Player");
+            int collisionLayer = cameraCollisionLayer & ~playerLayer;
+
+            if (Physics.SphereCast(cameraPivot.position, cameraCollisionRadius, direction.normalized, out hit, maxCameraDistance, collisionLayer))
+            {
+                currentCameraDistance = Mathf.Clamp(hit.distance - cameraCollisionRadius, minCameraDistance, maxCameraDistance);
+            }
+            else
+            {
+                currentCameraDistance = Mathf.Lerp(currentCameraDistance, maxCameraDistance, Time.deltaTime * 10f);
+            }
+
+            mainCamera.transform.position = cameraPivot.position - cameraPivot.forward * currentCameraDistance;
+            mainCamera.transform.LookAt(cameraPivot.position);
+        }
     }
 
     void HandleMovement()
@@ -153,5 +248,11 @@ public class AstronautController : MonoBehaviour
         Gizmos.color = Color.red;
         Vector3 rayOrigin = transform.position + Vector3.up * 0.1f;
         Gizmos.DrawLine(rayOrigin, rayOrigin + Vector3.down * (groundCheckDistance + 0.1f));
+
+        if (cameraPivot != null)
+        {
+            Gizmos.color = Color.blue;
+            Gizmos.DrawWireSphere(cameraPivot.position, cameraCollisionRadius);
+        }
     }
 }
