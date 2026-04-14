@@ -5,7 +5,6 @@ public class SceneInputController : MonoBehaviour
 {
     [Header("引用设置")]
     [SerializeField] private SceneManager sceneManager;
-    [SerializeField] private bool useBGMManager = false;
 
     void Update()
     {
@@ -44,59 +43,31 @@ public class SceneInputController : MonoBehaviour
 
     void HandleBGMControls(Keyboard keyboard)
     {
-        if (useBGMManager && BGM_DontDestroy.Instance != null)
+        if (sceneManager == null) return;
+
+        if (keyboard.f3Key.wasPressedThisFrame)
         {
-            if (keyboard.f3Key.wasPressedThisFrame)
-            {
-                BGM_DontDestroy.Instance.PreviousBGM();
-            }
-            else if (keyboard.f4Key.wasPressedThisFrame)
-            {
-                BGM_DontDestroy.Instance.NextBGM();
-            }
-            else if (keyboard.digit4Key.wasPressedThisFrame)
-            {
-                BGM_DontDestroy.Instance.SetBGM(0);
-            }
-            else if (keyboard.digit5Key.wasPressedThisFrame)
-            {
-                BGM_DontDestroy.Instance.SetBGM(1);
-            }
-            else if (keyboard.digit6Key.wasPressedThisFrame)
-            {
-                BGM_DontDestroy.Instance.SetBGM(2);
-            }
-            else if (keyboard.mKey.wasPressedThisFrame)
-            {
-                BGM_DontDestroy.Instance.ToggleMute();
-            }
+            sceneManager.PreviousBGM();
         }
-        else if (sceneManager != null)
+        else if (keyboard.f4Key.wasPressedThisFrame)
         {
-            if (keyboard.f3Key.wasPressedThisFrame)
-            {
-                sceneManager.PreviousBGM();
-            }
-            else if (keyboard.f4Key.wasPressedThisFrame)
-            {
-                sceneManager.NextBGM();
-            }
-            else if (keyboard.digit4Key.wasPressedThisFrame)
-            {
-                sceneManager.SetBGM(0);
-            }
-            else if (keyboard.digit5Key.wasPressedThisFrame)
-            {
-                sceneManager.SetBGM(1);
-            }
-            else if (keyboard.digit6Key.wasPressedThisFrame)
-            {
-                sceneManager.SetBGM(2);
-            }
-            else if (keyboard.mKey.wasPressedThisFrame)
-            {
-                sceneManager.ToggleMute();
-            }
+            sceneManager.NextBGM();
+        }
+        else if (keyboard.digit4Key.wasPressedThisFrame)
+        {
+            sceneManager.SetBGM(0);
+        }
+        else if (keyboard.digit5Key.wasPressedThisFrame)
+        {
+            sceneManager.SetBGM(1);
+        }
+        else if (keyboard.digit6Key.wasPressedThisFrame)
+        {
+            sceneManager.SetBGM(2);
+        }
+        else if (keyboard.mKey.wasPressedThisFrame)
+        {
+            sceneManager.ToggleMute();
         }
     }
 }

@@ -32,7 +32,12 @@ AR/
 │   │   │   └── SampleScene.unity        # 主场景
 │   │   ├── Scripts/                     # 核心脚本
 │   │   │   ├── SetupMoonSurface.cs      # 月球场景自动生成器
-│   │   │   └── EnhanceMoonScene.cs      # 场景增强器（岩石、地面扩展）
+│   │   │   ├── EnhanceMoonScene.cs      # 场景增强器（岩石、地面扩展）
+│   │   │   ├── SceneManager.cs          # 场景管理器（天空盒+BGM切换）
+│   │   │   ├── SceneInputController.cs  # 输入控制器（键盘快捷键测试）
+│   │   │   ├── AstronautController.cs   # 宇航员控制器
+│   │   │   ├── AstronautAnimationController.cs  # 宇航员动画控制器
+│   │   │   └── AstronautAnimationTester.cs     # 宇航员动画测试工具
 │   │   ├── Settings/                    # URP 渲染配置
 │   │   │   ├── Mobile_RPAsset.asset     # 移动端渲染管线
 │   │   │   ├── PC_RPAsset.asset         # PC 高质量渲染管线
@@ -361,6 +366,55 @@ Unity 对文件路径非常敏感。确保：
 | `rockScaleRange` | 0.5~3m | 岩石大小范围 |
 | `randomSeed` | 42 | 随机种子（可复现） |
 
+### 3️⃣ 场景管理器 ([SceneManager.cs](My%20project/Assets/Scripts/SceneManager.cs))
+
+**功能特性：**
+- 🎵 **三种BGM切换** — 支持多首背景音乐的平滑淡入淡出切换
+- 🌌 **动态天空盒** — 可配置多种天空盒材质，运行时切换
+- 🎚️ **音量控制** — 支持音量调节和静音
+- 🔄 **环境光联动** — 天空盒切换时自动调整环境光颜色
+
+**使用方法：**
+
+1. 创建空 GameObject，命名为 `SceneManager`
+2. 添加 `SceneManager` 组件
+3. 在 Inspector 中配置：
+   - **Skybox Materials**: 拖入 3 个天空盒材质（对应 1/2/3 号）
+   - **BGM Clips**: 拖入 3 个音频文件（mp3/wav）
+   - **BGM Volume**: 音量 (0~1)
+   - **Fade Duration**: 淡入淡出时间（秒）
+
+**代码调用示例：**
+```csharp
+// 获取场景管理器引用
+var sceneManager = FindObjectOfType<SceneManager>();
+
+// 切换 BGM
+sceneManager.NextBGM();        // 下一首
+sceneManager.PreviousBGM();    // 上一首
+sceneManager.SetBGM(1);        // 直接播放第 2 首 (0, 1, 2)
+
+// 切换天空盒
+sceneManager.NextSkybox();     // 下一个天空盒
+sceneManager.SetSkybox(0);     // 设置为第 1 个天空盒
+
+// 音量控制
+sceneManager.SetVolume(0.5f);  // 设置音量为 50%
+sceneManager.ToggleMute();     // 静音切换
+```
+
+### 4️⃣ 输入控制器 ([SceneInputController.cs](My%20project/Assets/Scripts/SceneInputController.cs))
+
+**测试快捷键：** （需添加该组件到任意 GameObject）
+
+| 快捷键 | 功能 |
+|--------|------|
+| **F1 / F2** | 上一个 / 下一个天空盒 |
+| **1 / 2 / 3** | 直接切换到第 1/2/3 个天空盒 |
+| **F3 / F4** | 上一首 / 下一首 BGM |
+| **4 / 5 / 6** | 直接播放第 1/2/3 首 BGM |
+| **M** | 静音切换 |
+
 ---
 
 ## 📦 资源说明
@@ -530,6 +584,14 @@ git push origin feature/xxx
 
 ## 📝 更新日志
 
+### v1.3 (2026-04-14)
+
+- ✨ **新增场景管理器** (`SceneManager.cs`): 支持动态天空盒切换 + 三种BGM平滑切换
+- ⌨️ **新增输入控制器** (`SceneInputController.cs`): 键盘快捷键测试（F1-F4, 1-6, M）
+- 🎵 **BGM系统重构**: 从单首音乐升级为支持三种BGM循环切换
+- 🌌 **天空盒系统优化**: 从硬编码改为可配置的Inspector拖拽方式
+- 📖 **更新 README.md**: 增加场景管理和BGM系统的详细使用文档
+
 ### v1.2 (2026-04-14)
 
 - 🎵 **新增音频资源**: 添加背景音乐文件 (`musiccc.mp3`)
@@ -563,12 +625,12 @@ git push origin feature/xxx
 |------|------|
 | Unity 版本 | 6000.4.1f1 |
 | URP 版本 | 17.4.0 |
-| 核心脚本 | 8 个 (C#) |
+| 核心脚本 | 10 个 (C#) |
 | 场景文件 | 1 个 |
 | 月球纹理 | 50+ 张 PBR |
 | 岩石变体 | 7 种 |
 | 天空盒 | 3 套（1K/2K/4K 分辨率） |
-| 音频文件 | 1 个（背景音乐） |
+| BGM 音乐 | 支持多首切换（默认3首） |
 | 大型资产总大小 | ~3.5 GB（云盘分发） |
 | Git 仓库大小 | ~几 MB（仅代码+配置） |
 
