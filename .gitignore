@@ -27,6 +27,14 @@ My project/Assets/Models/moon/textures/*.png
 My project/Assets/Models/moon/textures/*.jpg
 My project/Assets/Models/moon/textures/*.tga
 
+# Audio files (music, sound effects)
+My project/Assets/Audio/*.mp3
+My project/Assets/Audio/*.wav
+My project/Assets/Audio/*.ogg
+
+# Skybox textures (SpaceSkies Free)
+My project/Assets/SpaceSkies Free/*
+
 # ============================================
 # Unity Generated
 # ============================================
