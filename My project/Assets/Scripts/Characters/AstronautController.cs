@@ -56,12 +56,20 @@ public class AstronautController : MonoBehaviour
             cameraCollisionLayer = LayerMask.GetMask("Default");
         }
 
-        gameObject.layer = LayerMask.NameToLayer("Player");
+        int playerLayerIndex = LayerMask.NameToLayer("Player");
+        if (playerLayerIndex == -1)
+        {
+            Debug.LogWarning("[AstronautController] 'Player' layer not found! Using Default layer (0) instead.");
+            playerLayerIndex = 0;
+        }
+        gameObject.layer = playerLayerIndex;
 
         if (playerModel != null)
         {
-            playerModel.gameObject.layer = LayerMask.NameToLayer("Player");
+            playerModel.gameObject.layer = playerLayerIndex;
         }
+        
+        Debug.Log($"[AstronautController] Player layer set to: {LayerMask.LayerToName(playerLayerIndex)} ({playerLayerIndex})");
 
         SetupCameraCollision();
 
