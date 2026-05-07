@@ -44,7 +44,8 @@ public class AstronautController : MonoBehaviour
         controller = GetComponent<CharacterController>();
         anim = GetComponent<AstronautAnimationController>();
 
-        Cursor.lockState = CursorLockMode.Locked;
+        // 光标锁定由 EmotionPanel 统一管理，这里只做初始化
+        // Cursor.lockState = CursorLockMode.Locked;
 
         if (groundLayer == 0)
         {
@@ -137,10 +138,20 @@ public class AstronautController : MonoBehaviour
 
     void HandleMouseLook()
     {
+        // 只有在光标锁定时才处理鼠标视角
+        if (Cursor.lockState != CursorLockMode.Locked) return;
+        
         var mouse = Mouse.current;
         if (mouse == null) return;
 
         Vector2 mouseDelta = mouse.delta.ReadValue();
+        
+        // 过滤掉过大的鼠标移动（可能是因为光标锁定状态变化导致的）
+        if (Mathf.Abs(mouseDelta.x) > 500f || Mathf.Abs(mouseDelta.y) > 500f)
+        {
+            return;
+        }
+        
         float mouseX = mouseDelta.x * mouseSensitivity * Time.deltaTime;
         float mouseY = mouseDelta.y * mouseSensitivity * Time.deltaTime;
 

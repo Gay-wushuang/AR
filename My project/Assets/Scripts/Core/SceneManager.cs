@@ -17,8 +17,16 @@ public class SceneManager : MonoBehaviour
     [Header("环境光设置")]
     [SerializeField] private Color[] ambientColors;
 
+    [Header("天空盒过渡设置")]
+    [SerializeField] private float skyboxTransitionDuration = 1.5f;
+
     private AudioSource audioSource;
     private Coroutine fadeCoroutine;
+    private Coroutine skyboxTransitionCoroutine;
+    private Material currentSkyboxMaterial;
+    private Material targetSkyboxMaterial;
+    private Color currentAmbientColorValue;
+    private Color targetAmbientColorValue;
 
     void Awake()
     {
@@ -29,32 +37,41 @@ public class SceneManager : MonoBehaviour
 
     void Start()
     {
-        ApplySkybox(currentSkyboxIndex);
-        ApplyAmbientColor(currentSkyboxIndex);
+        // 初始应用，不使用渐变
+        if (skyboxMaterials != null && currentSkyboxIndex < skyboxMaterials.Length && skyboxMaterials[currentSkyboxIndex] != null)
+        {
+            currentSkyboxMaterial = skyboxMaterials[currentSkyboxIndex];
+            RenderSettings.skybox = currentSkyboxMaterial;
+            DynamicGI.UpdateEnvironment();
+        }
+        
+        if (ambientColors != null && currentSkyboxIndex < ambientColors.Length)
+        {
+            currentAmbientColorValue = ambientColors[currentSkyboxIndex];
+            RenderSettings.ambientSkyColor = currentAmbientColorValue;
+        }
+        
         PlayBGM(currentBGMIndex);
     }
 
     public void NextSkybox()
     {
         currentSkyboxIndex = (currentSkyboxIndex + 1) % skyboxMaterials.Length;
-        ApplySkybox(currentSkyboxIndex);
-        ApplyAmbientColor(currentSkyboxIndex);
+        TransitionToSkybox(currentSkyboxIndex);
     }
 
     public void PreviousSkybox()
     {
         currentSkyboxIndex = (currentSkyboxIndex - 1 + skyboxMaterials.Length) % skyboxMaterials.Length;
-        ApplySkybox(currentSkyboxIndex);
-        ApplyAmbientColor(currentSkyboxIndex);
+        TransitionToSkybox(currentSkyboxIndex);
     }
 
     public void SetSkybox(int index)
     {
-        if (index >= 0 && index < skyboxMaterials.Length)
+        if (index >= 0 && index < skyboxMaterials.Length && index != currentSkyboxIndex)
         {
             currentSkyboxIndex = index;
-            ApplySkybox(currentSkyboxIndex);
-            ApplyAmbientColor(currentSkyboxIndex);
+            TransitionToSkybox(currentSkyboxIndex);
         }
     }
 
@@ -90,23 +107,59 @@ public class SceneManager : MonoBehaviour
         audioSource.mute = !audioSource.mute;
     }
 
-    private void ApplySkybox(int index)
+    private void TransitionToSkybox(int index)
     {
-        if (skyboxMaterials != null && index < skyboxMaterials.Length && skyboxMaterials[index] != null)
-        {
-            RenderSettings.skybox = skyboxMaterials[index];
-            DynamicGI.UpdateEnvironment();
-            Debug.Log($"已应用天空盒: {skyboxMaterials[index].name}");
-        }
-    }
-
-    private void ApplyAmbientColor(int index)
-    {
+        if (skyboxMaterials == null || index >= skyboxMaterials.Length || skyboxMaterials[index] == null) return;
+        
+        targetSkyboxMaterial = skyboxMaterials[index];
+        
         if (ambientColors != null && index < ambientColors.Length)
         {
-            RenderSettings.ambientSkyColor = ambientColors[index];
-            DynamicGI.UpdateEnvironment();
+            targetAmbientColorValue = ambientColors[index];
         }
+        
+        // 停止之前的过渡协程
+        if (skyboxTransitionCoroutine != null)
+        {
+            StopCoroutine(skyboxTransitionCoroutine);
+        }
+        
+        // 启动新的过渡协程
+        skyboxTransitionCoroutine = StartCoroutine(SkyboxTransitionCoroutine());
+    }
+
+    private IEnumerator SkyboxTransitionCoroutine()
+    {
+        float elapsed = 0f;
+        Material startSkybox = currentSkyboxMaterial;
+        Color startAmbient = currentAmbientColorValue;
+        
+        Debug.Log($"开始天空盒过渡: {(startSkybox != null ? startSkybox.name : "null")} -> {targetSkyboxMaterial.name}");
+        
+        while (elapsed < skyboxTransitionDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / skyboxTransitionDuration;
+            
+            // 使用 Lerp 进行天空盒和环境光的平滑过渡
+            Material blended = new Material(startSkybox);
+            blended.Lerp(startSkybox, targetSkyboxMaterial, t);
+            RenderSettings.skybox = blended;
+            
+            RenderSettings.ambientSkyColor = Color.Lerp(startAmbient, targetAmbientColorValue, t);
+            
+            yield return null;
+        }
+        
+        // 最终确认
+        currentSkyboxMaterial = targetSkyboxMaterial;
+        currentAmbientColorValue = targetAmbientColorValue;
+        RenderSettings.skybox = currentSkyboxMaterial;
+        RenderSettings.ambientSkyColor = currentAmbientColorValue;
+        DynamicGI.UpdateEnvironment();
+        
+        skyboxTransitionCoroutine = null;
+        Debug.Log($"天空盒过渡完成: {currentSkyboxMaterial.name}");
     }
 
     private void PlayBGM(int index)
