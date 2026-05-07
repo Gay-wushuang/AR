@@ -148,6 +148,20 @@ Resources/
 # *参考.md
 
 # ============================================
+# Internal Documents (not for version control)
+# ============================================
+# Research/proposal documents
+8~9.md
+附件4-1*.doc
+附件4-1*.docx
+
+# Internal notes and suggestions
+建议.md
+
+# Tool configuration files
+Unity 聊天系统生成提示词.md
+
+# ============================================
 # Windows System Files
 # ============================================
 nul
