@@ -33,7 +33,7 @@ My project/Assets/Audio/*.wav
 My project/Assets/Audio/*.ogg
 
 # Skybox textures (SpaceSkies Free)
-My project/Assets/SpaceSkies Free/*
+My project/Assets/SpaceSkies Free/
 
 # ============================================
 # Unity Generated
@@ -156,3 +156,4 @@ prn
 aux
 com[0-9]
 lpt[0-9]
+realtime_inference/
