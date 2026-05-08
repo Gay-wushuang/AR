@@ -147,7 +147,7 @@ public class EnhanceMoonScene : MonoBehaviour
 
     private void ApplyRockMaterial(GameObject rock, int typeIndex, System.Random rng)
     {
-        var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        var material = new Material(Shader.Find("Standard"));
         material.enableInstancing = true;
 
         // 如果该类型配置了纹理，使用完整的 PBR 材质
@@ -168,30 +168,28 @@ public class EnhanceMoonScene : MonoBehaviour
                 material.SetFloat("_BumpScale", 0.3f);
             }
 
-            // 暂时禁用 roughness 贴图（在 URP 里需要转成 smoothness 才能用）
-            // if (rm.roughness != null)
-            // {
-            //     material.SetTexture("_MetallicGlossMap", rm.roughness);
-            //     material.EnableKeyword("_METALLICSPECGLOSSMAP");
-            // }
+            // 启用 roughness 贴图（Standard Shader 使用 _MetallicGlossMap）
+            if (rm.roughness != null)
+            {
+                material.SetTexture("_MetallicGlossMap", rm.roughness);
+                material.EnableKeyword("_METALLICGLOSSMAP");
+            }
 
             // 直接设置固定的金属度和光滑度（更粗糙）
             material.SetFloat("_Metallic", 0f);
-            material.SetFloat("_Smoothness", 0.15f);
+            material.SetFloat("_Glossiness", 0.15f);
 
             // 禁用位移/视差贴图
             // if (rm.displacement != null)
             // {
-            //     material.SetTexture("_ParallaxMap", rm.displacement);
-            //     material.EnableKeyword("_PARALLAXMAP");
-            //     material.SetFloat("_Parallax", 0.05f);
+            //     // Standard Shader 不直接支持视差贴图
             // }
         }
         else
         {
-            // 回退到程序化颜色
-            float gray = 0.3f + (float)rng.NextDouble() * 0.3f;
-            material.color = new Color(gray, gray * 0.95f, gray * 0.9f);
+            // 回退到程序化颜色（更亮的月球岩石）
+            float gray = 0.65f + (float)rng.NextDouble() * 0.25f;
+            material.color = new Color(gray, gray * 0.96f, gray * 0.92f);
         }
 
         rock.GetComponent<Renderer>().material = material;

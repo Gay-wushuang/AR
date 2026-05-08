@@ -78,8 +78,12 @@ Desktop.ini
 *.userosscache
 *.suo
 *.cache
-*.dll
 *.pdb
+
+# 忽略一般的 DLL，但保留 Unity Plugins 文件夹下的 DLL
+*.dll
+!My project/Assets/Plugins/*.dll
+!My project/Assets/Plugins/**/*.dll
 
 # ============================================
 # Build Output

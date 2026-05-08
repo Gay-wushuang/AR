@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.Rendering.Universal;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -25,13 +24,13 @@ public class SetupMoonSurface : MonoBehaviour
     [SerializeField] [Range(32, 128)] private int groundSubdivisions = 64;
 
     [Header("地形起伏（绝对能看到！）")]
-    [Tooltip("起伏高度，越大越明显（推荐0.5-2）")]
-    [SerializeField] private float terrainHeight = 1.0f;
+    [Tooltip("起伏高度，越大越明显（推荐0.5-3）")]
+    [SerializeField] private float terrainHeight = 1.8f;
     [Tooltip("起伏细密程度，越多越密（推荐2-6）")]
     [SerializeField] [Range(1, 8)] private int terrainOctaves = 4;
-    [SerializeField] private float terrainScale = 20f;
-    [SerializeField] private float terrainPersistence = 0.45f;
-    [SerializeField] private float terrainLacunarity = 1.8f;
+    [SerializeField] private float terrainScale = 15f;
+    [SerializeField] private float terrainPersistence = 0.5f;
+    [SerializeField] private float terrainLacunarity = 2.0f;
 
     [Header("🌑 陨石坑设置（直接刻在地面上！）")]
     [Tooltip("陨石坑数量")]
@@ -46,7 +45,7 @@ public class SetupMoonSurface : MonoBehaviour
     [SerializeField] private int craterRandomSeed = 42;
 
     [Header("光照设置")]
-    [SerializeField] private float sunIntensity = 1.5f;
+    [SerializeField] private float sunIntensity = 2.2f; // 更亮的太阳光
     [SerializeField] private Vector3 sunRotation = new Vector3(50f, -30f, 0f);
 
     [Header("相机设置")]
@@ -108,7 +107,7 @@ public class SetupMoonSurface : MonoBehaviour
         meshCollider.cookingOptions = MeshColliderCookingOptions.None;  // 不简化
 
         // 创建材质
-        var material = new Material(Shader.Find("Universal Render Pipeline/Lit"));
+        var material = new Material(Shader.Find("Standard"));
         material.name = "MoonMaterial_Regolith";
 
         if (moon_02_diff != null)
@@ -119,12 +118,12 @@ public class SetupMoonSurface : MonoBehaviour
         }
         else
         {
-            material.color = new Color(0.45f, 0.43f, 0.40f);
+            // 更亮的默认月球颜色
+            material.color = new Color(0.85f, 0.82f, 0.78f);
         }
 
         material.SetFloat("_Metallic", 0.0f);
-        material.SetFloat("_Smoothness", 0.0f);
-        material.doubleSidedGI = true;
+        material.SetFloat("_Glossiness", 0.0f);
 
         var renderer = ground.GetComponent<Renderer>();
         renderer.material = material;
@@ -242,7 +241,8 @@ public class SetupMoonSurface : MonoBehaviour
 
         for (int octave = 0; octave < terrainOctaves; octave++)
         {
-            height += Mathf.PerlinNoise((worldX + offsetX) * frequency, (worldZ + offsetZ) * frequency) * amplitude;
+            // PerlinNoise 返回 0-1，减去 0.5 让它在 -0.5 到 0.5 之间
+            height += (Mathf.PerlinNoise((worldX + offsetX) * frequency, (worldZ + offsetZ) * frequency) - 0.5f) * amplitude;
             amplitude *= terrainPersistence;
             frequency *= terrainLacunarity;
         }
@@ -275,7 +275,8 @@ public class SetupMoonSurface : MonoBehaviour
     {
         material.mainTexture = diff;
         material.mainTextureScale = tiling;
-        material.color = new Color(0.75f, 0.73f, 0.70f);
+        // 更亮的月球颜色（真实月球是亮灰色）
+        material.color = new Color(0.95f, 0.92f, 0.88f);
 
         if (nor != null)
         {
@@ -289,18 +290,11 @@ public class SetupMoonSurface : MonoBehaviour
         {
             material.SetTexture("_MetallicGlossMap", rough);
             material.SetTextureScale("_MetallicGlossMap", tiling);
-            material.EnableKeyword("_METALLICSPECGLOSSMAP");
-            material.SetFloat("_GlossMapScale", 0.0f);
-            material.SetFloat("_Smoothness", 0.0f);
+            material.EnableKeyword("_METALLICGLOSSMAP");
+            material.SetFloat("_Glossiness", 0.0f);
         }
 
-        if (disp != null)
-        {
-            material.SetTexture("_ParallaxMap", disp);
-            material.SetTextureScale("_ParallaxMap", tiling);
-            material.EnableKeyword("_PARALLAXMAP");
-            material.SetFloat("_Parallax", parallax);
-        }
+        // Standard Shader 不直接支持视差贴图
     }
 
     private void CreateSunlight()
@@ -327,8 +321,9 @@ public class SetupMoonSurface : MonoBehaviour
 
     private void SetupAmbientLight()
     {
-        RenderSettings.ambientSkyColor = new Color(0.02f, 0.02f, 0.025f);
-        RenderSettings.ambientIntensity = 0.3f;
+        // 更亮的环境光（月球没有大气，但我们需要让暗部可见）
+        RenderSettings.ambientSkyColor = new Color(0.15f, 0.15f, 0.18f);
+        RenderSettings.ambientIntensity = 0.6f;
 
         var probeGO = GameObject.Find("SceneReflectionProbe");
         if (probeGO == null)
@@ -336,7 +331,7 @@ public class SetupMoonSurface : MonoBehaviour
             probeGO = new GameObject("SceneReflectionProbe");
             var probe = probeGO.AddComponent<ReflectionProbe>();
             probe.resolution = 256;
-            probe.backgroundColor = new Color(0.01f, 0.01f, 0.015f, 1f);
+            probe.backgroundColor = new Color(0.05f, 0.05f, 0.06f, 1f);
             probe.size = new Vector3(50f, 20f, 50f);
             probe.blendDistance = 5f;
         }
@@ -351,12 +346,6 @@ public class SetupMoonSurface : MonoBehaviour
         {
             cam.transform.position = cameraPosition;
             cam.transform.LookAt(Vector3.zero);
-
-            var camData = cam.GetUniversalAdditionalCameraData();
-            if (camData != null)
-            {
-                camData.renderPostProcessing = true;
-            }
 
             Debug.Log("✅ 相机位置已设置");
         }
