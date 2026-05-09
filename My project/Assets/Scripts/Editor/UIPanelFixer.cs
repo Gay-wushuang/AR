@@ -48,7 +48,6 @@ namespace EEGAI.UI.Editor
             foreach (var textComp in textComponents)
             {
                 textComp.enableWordWrapping = true;
-                textComp.textWrappingMode = TextWrappingModes.Normal;
                 textComp.overflowMode = TextOverflowModes.Overflow;
                 EditorUtility.SetDirty(textComp);
                 fixCount++;
