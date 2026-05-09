@@ -1,10 +1,17 @@
 # 🌙 EEG_AI_AR - 太空探索 AR 体验
 
-基于 **Unity 6** 的增强现实 (AR) 项目，结合脑电波 (EEG) 数据与人工智能技术，构建沉浸式月球探索体验。
+基于 **Unity 2022 LTS** 的增强现实 (AR) 项目，结合脑电波 (EEG) 数据与人工智能技术，构建沉浸式月球探索体验。
 
-![Unity](https://img.shields.io/badge/Unity-6000.4.1f1-black?logo=unity)
-![URP](https://img.shields.io/badge/URP-17.4.0-blue)
+![Unity](https://img.shields.io/badge/Unity-2022.3.62f3c1-black?logo=unity)
+![URP](https://img.shields.io/badge/URP-14.0.10-blue)
 ![Platform](https://img.shields.io/badge/Platform-Mobile%20%7C%20VR%20%7C%20AR-orange)
+
+## 🔄 迁移说明
+
+**已从 Unity 6 迁移至 Unity 2022 LTS**：
+- 确保与 **Rokid UXR 2.0 SDK** 的完全兼容性
+- Unity 2022 LTS 是 Rokid 官方推荐版本
+- 获得更稳定的长期支持和更好的设备兼容性
 
 ---
 
@@ -23,30 +30,39 @@
 
 ```
 AR/
-├── My project/                          # Unity 主项目（Git 仓库核心）
-│   ├── Assets/
-│   │   ├── Models/                      # 📦 3D 资源（需手动放置！）
-│   │   │   ├── astronaut/               # 宇航员 GLB 模型 + 纹理 (~55MB)
-│   │   │   └── moon/                    # 月球纹理 + 材质 + Blender 源文件 (~3.2GB)
-│   │   ├── Scenes/
-│   │   │   └── SampleScene.unity        # 主场景
-│   │   ├── Scripts/                     # 核心脚本
-│   │   │   ├── SetupMoonSurface.cs      # 月球场景自动生成器
-│   │   │   └── EnhanceMoonScene.cs      # 场景增强器（岩石、地面扩展）
-│   │   ├── Settings/                    # URP 渲染配置
-│   │   │   ├── Mobile_RPAsset.asset     # 移动端渲染管线
-│   │   │   ├── PC_RPAsset.asset         # PC 高质量渲染管线
-│   │   │   └── DefaultVolumeProfile.asset # 后处理效果
-│   │   └── TutorialInfo/                # 教程信息
-│   ├── Packages/
-│   │   └── manifest.json                # 依赖包定义
-│   └── ProjectSettings/                 # 项目配置
-├── AGENTS.md                            # AI 助手开发指南
-├── README.md                            # 本文档
-└── .gitignore                           # Git 忽略规则（大文件已排除）
+├── My_2022/                            # ✅ Unity 2022 LTS 主项目（Git 仓库核心）
+│   └── New Unity Project/              # Unity 2022.3.62f3c1 项目
+│       ├── Assets/
+│       │   ├── Models/                 # 📦 3D 资源（需手动放置！）
+│       │   │   ├── astronaut/         # 宇航员 GLB 模型 + 纹理 (~55MB)
+│       │   │   └── moon/            # 月球纹理 + 材质 + Blender 源文件 (~3.2GB)
+│       │   ├── Scenes/
+│       │   │   └── SampleScene.unity     # 主场景
+│       │   ├── Scripts/                # 核心脚本
+│       │   │   ├── SetupMoonSurface.cs # 月球场景自动生成器
+│       │   │   └── EnhanceMoonScene.cs # 场景增强器（岩石、地面扩展）
+│       │   ├── Settings/              # URP 渲染配置
+│       │   │   ├── Mobile_RPAsset.asset  # 移动端渲染管线
+│       │   │   ├── PC_RPAsset.asset      # PC 高质量渲染管线
+│       │   │   └── DefaultVolumeProfile.asset # 后处理效果
+│       │   └── TutorialInfo/         # 教程信息
+│       ├── Packages/
+│       │   └── manifest.json           # 依赖包定义
+│       └── ProjectSettings/         # 项目配置
+├── My project/                         # ⚠️ 旧版 Unity 6 项目（备份，已废弃）
+├── AGENTS.md                           # AI 助手开发指南
+├── README.md                           # 本文档
+└── .gitignore                          # Git 忽略规则（大文件已排除）
 ```
 
-> ⚠️ **注意**: `astronaut/`、`moon/` 等根目录为旧版资源位置，已迁移至 `My project/Assets/Models/` 下，Git 已忽略。详见下方 **📥 大文件下载指南**
+### 📁 项目目录说明
+
+| 目录 | 说明 | 状态 |
+|------|------|------|
+| `My_2022/New Unity Project/` | **当前使用的 Unity 2022 LTS 项目** | ✅ 活跃 |
+| `My project/` | 旧版 Unity 6 项目（备份） | ⚠️ 已废弃 |
+
+> ⚠️ **注意**: `astronaut/`、`moon/` 等根目录为旧版资源位置，已迁移至 `My_2022/New Unity Project/Assets/Models/` 下，Git 已忽略。详见下方 **📥 大文件下载指南**
 
 ---
 
@@ -54,13 +70,14 @@ AR/
 
 | 技术 | 版本 | 用途 |
 |------|------|------|
-| **Unity Editor** | 6000.4.1f1 | 游戏引擎 |
-| **Universal Render Pipeline** | 17.4.0 | 高性能渲染 |
-| **Input System** | 1.19.0 | 跨平台输入处理 |
-| **GLTFast** | 6.18.0 | GLB/GLTF 模型加载 |
-| **AI Navigation** | 2.0.11 | AI 寻路系统 |
-| **Visual Scripting** | 1.9.11 | 可视化编程 |
-| **Timeline** | 1.8.11 | 序列动画 |
+| **Unity Editor** | 2022.3.62f3c1 (LTS) | 游戏引擎 |
+| **Universal Render Pipeline** | 14.0.10 | 高性能渲染 |
+| **Input System** | 1.7.0 | 跨平台输入处理 |
+| **TextMeshPro** | 3.0.9 | 文本渲染系统 |
+| **GLTFast** | 6.8.0 | GLB/GLTF 模型加载 |
+| **AI Navigation** | 1.1.5 | AI 寻路系统 |
+| **Visual Scripting** | 1.9.1 | 可视化编程 |
+| **Timeline** | 1.7.6 | 序列动画 |
 
 ---
 
@@ -68,7 +85,7 @@ AR/
 
 ### 环境要求
 
-- ✅ **Unity Hub** & **Unity Editor 6000.4.1f1+**
+- ✅ **Unity Hub** & **Unity Editor 2022.3.62f3c1+** (LTS)
 - 💻 **Windows 10/11** 或 **macOS 10.15+**
 - 🎮 支持 DX11/Vulkan 的 GPU
 - 💾 **磁盘空间 ≥ 10 GB**（含 Unity 缓存 + 大型 3D 资产）
@@ -82,7 +99,7 @@ AR/
         ↓
 3. 解压到指定目录
         ↓
-4. 用 Unity Hub 打开 → 自动导入资产
+4. 用 Unity Hub 打开 My_2022/New Unity Project → 自动导入资产
         ↓
 5. 打开场景 → 点击 Play 运行
 ```
@@ -119,11 +136,11 @@ cd EEG_AI_AR/AR
 
 | 资源包 | 包含内容 | 大小 | 放置目标 |
 |--------|---------|------|---------|
-| **astronaut_assets.zip** | 宇航员 GLB 模型 + 11 张 PBR 纹理 | ~55 MB | `My project/Assets/Models/astronaut/` |
-| **moon_textures.zip** | 月球场景 50+ 张 PBR 纹理贴图 | ~1.4 GB | `My project/Assets/Models/moon/textures/` |
-| **moon_source.blend** | 月球 Blender 源文件（可选，用于编辑材质） | ~1.8 GB | `My project/Assets/Models/moon/` |
-| **audio_assets.zip** | 背景音乐文件（musiccc.mp3） | ~10 MB | `My project/Assets/Audio/` |
-| **skybox_assets.zip** | SpaceSkies Free 天空盒纹理（3 套，1K/2K/4K 分辨率） | ~200 MB | `My project/Assets/SpaceSkies Free/` |
+| **astronaut_assets.zip** | 宇航员 GLB 模型 + 11 张 PBR 纹理 | ~55 MB | `My_2022/New Unity Project/Assets/Models/astronaut/` |
+| **moon_textures.zip** | 月球场景 50+ 张 PBR 纹理贴图 | ~1.4 GB | `My_2022/New Unity Project/Assets/Models/moon/textures/` |
+| **moon_source.blend** | 月球 Blender 源文件（可选，用于编辑材质） | ~1.8 GB | `My_2022/New Unity Project/Assets/Models/moon/` |
+| **audio_assets.zip** | 背景音乐文件（musiccc.mp3） | ~10 MB | `My_2022/New Unity Project/Assets/Audio/` |
+| **skybox_assets.zip** | SpaceSkies Free 天空盒纹理（3 套，1K/2K/4K 分辨率） | ~200 MB | `My_2022/New Unity Project/Assets/SpaceSkies Free/` |
 
 > 💡 **没有云盘链接？** 请联系项目负责人获取共享盘地址。
 
@@ -135,92 +152,96 @@ cd EEG_AI_AR/AR
 
 ```
 项目根目录/
-└── My project/
-    └── Assets/
-        └── Models/
-            └── astronaut/              ← 解压 astronaut_assets.zip 到这里
-                ├── source/
-                │   ├── Astronaut.glb        ← 必须有此文件 (~44MB)
-                │   └── Astronaut.glb.meta   ← Unity 自动生成
-                └── textures/
-                    ├── gltf_embedded_0.png       ← 必须有 (~11张)
-                    ├── gltf_embedded_1@channels=RGB.png
-                    ├── gltf_embedded_1@channels=A.png
-                    ├── gltf_embedded_2.png
-                    ├── gltf_embedded_3.png
-                    ├── gltf_embedded_4.png
-                    ├── gltf_embedded_5@channels=RGB.png
-                    ├── gltf_embedded_5@channels=A.png
-                    ├── gltf_embedded_6.png
-                    └── gltf_embedded_7.png
+└── My_2022/
+    └── New Unity Project/
+        └── Assets/
+            └── Models/
+                └── astronaut/              ← 解压 astronaut_assets.zip 到这里
+                    ├── source/
+                    │   ├── Astronaut.glb        ← 必须有此文件 (~44MB)
+                    │   └── Astronaut.glb.meta   ← Unity 自动生成
+                    └── textures/
+                        ├── gltf_embedded_0.png       ← 必须有 (~11张)
+                        ├── gltf_embedded_1@channels=RGB.png
+                        ├── gltf_embedded_1@channels=A.png
+                        ├── gltf_embedded_2.png
+                        ├── gltf_embedded_3.png
+                        ├── gltf_embedded_4.png
+                        ├── gltf_embedded_5@channels=RGB.png
+                        ├── gltf_embedded_5@channels=A.png
+                        ├── gltf_embedded_6.png
+                        └── gltf_embedded_7.png
 ```
 
 #### ✅ 月球纹理
 
 ```
 项目根目录/
-└── My project/
-    └── Assets/
-        └── Models/
-            └── moon/                  ← 解压 moon_textures.zip 的内容到这里
-                ├── textures/             ← 解压 moon_textures.zip 到这里
-                │   ├── moon_02_diff.png          ← 月球基础漫反射 (~77MB)
-                │   ├── moon_02_nor_gl.png         ← 法线贴图 (~87MB)
-                │   ├── moon_02_rough.png          ← 粗糙度 (~22MB)
-                │   ├── moon_02_disp.png            ← 位移贴图 (~30MB)
-                │   ├── moon_footprints_02_diff.png ← 足迹细节 (~170MB)
-                │   ├── moon_footprints_02_nor_gl.png
-                │   ├── moon_footprints_02_rough.png
-                │   ├── moon_footprints_02_disp.png
-                │   ├── moon_macro_01_diff.png      ← 宏观纹理 (~86MB)
-                │   ├── moon_macro_01_nor_gl.png
-                │   ├── moon_macro_01_rough.png
-                │   ├── moon_macro_01_disp.png
-                │   ├── moon_meteor_01_diff.png     ← 陨石坑 (~71MB)
-                │   ├── moon_meteor_01_nor_gl.png
-                │   ├── moon_meteor_01_rough.png
-                │   ├── moon_meteor_01_disp.png
-                │   ├── moon_rock_01~07_diff.png     ← 7种岩石变体 (各~15MB)
-                │   ├── moon_rock_01~07_nor_gl.png
-                │   ├── moon_rock_01~07_rough.png
-                │   ├── moon_rock_01~07_disp.png
-                │   ├── moon_rock_04_ao.png          ← 仅 rock04 有 AO
-                │   ├── earth_diff.png               ← 地球天体
-                │   ├── earth_norm.png
-                │   ├── Marker_07.png                ← 标记细节
-                │   ├── VisorScratch.png             ← 面罩划痕
-                │   ├── ph_grid.png                  ← 网格特效
-                │   └── ph_lens_dirt.png             ← 镜头污垢
-                └── ph_moon.blend                  ← 可选: Blender 源文件 (~1.8GB)
+└── My_2022/
+    └── New Unity Project/
+        └── Assets/
+            └── Models/
+                └── moon/                  ← 解压 moon_textures.zip 的内容到这里
+                    ├── textures/             ← 解压 moon_textures.zip 到这里
+                    │   ├── moon_02_diff.png          ← 月球基础漫反射 (~77MB)
+                    │   ├── moon_02_nor_gl.png         ← 法线贴图 (~87MB)
+                    │   ├── moon_02_rough.png          ← 粗糙度 (~22MB)
+                    │   ├── moon_02_disp.png            ← 位移贴图 (~30MB)
+                    │   ├── moon_footprints_02_diff.png ← 足迹细节 (~170MB)
+                    │   ├── moon_footprints_02_nor_gl.png
+                    │   ├── moon_footprints_02_rough.png
+                    │   ├── moon_footprints_02_disp.png
+                    │   ├── moon_macro_01_diff.png      ← 宏观纹理 (~86MB)
+                    │   ├── moon_macro_01_nor_gl.png
+                    │   ├── moon_macro_01_rough.png
+                    │   ├── moon_macro_01_disp.png
+                    │   ├── moon_meteor_01_diff.png ← 陨石坑 (~71MB)
+                    │   ├── moon_meteor_01_nor_gl.png
+                    │   ├── moon_meteor_01_rough.png
+                    │   ├── moon_meteor_01_disp.png
+                    │   ├── moon_rock_01~07_diff.png ← 7种岩石变体 (各~15MB)
+                    │   ├── moon_rock_01~07_nor_gl.png
+                    │   ├── moon_rock_01~07_rough.png
+                    │   ├── moon_rock_01~07_disp.png
+                    │   ├── moon_rock_04_ao.png          ← 仅 rock04 有 AO
+                    │   ├── earth_diff.png               ← 地球天体
+                    │   ├── earth_norm.png
+                    │   ├── Marker_07.png                   ← 标记细节
+                    │   ├── VisorScratch.png                ← 面罩划痕
+                    │   ├── ph_grid.png                     ← 网格特效
+                    │   └── ph_lens_dirt.png                ← 镜头污垢
+                    └── ph_moon.blend                   ← 可选: Blender 源文件 (~1.8GB)
 ```
 
 #### ✅ 音频文件
 
 ```
 项目根目录/
-└── My project/
-    └── Assets/
-        └── Audio/                    ← 解压 audio_assets.zip 到这里
-            └── musiccc.mp3            ← 背景音乐文件 (~10MB)
+└── My_2022/
+    └── New Unity Project/
+        └── Assets/
+            └── Audio/                    ← 解压 audio_assets.zip 到这里
+                └── musiccc.mp3            ← 背景音乐文件 (~10MB)
 ```
 
 #### ✅ 天空盒纹理
 
 ```
 项目根目录/
-└── My project/
-    └── Assets/
-        └── SpaceSkies Free/          ← 解压 skybox_assets.zip 到这里
-            ├── Skybox_1/             ← 粉色系天空盒
-            │   ├── Textures/         ← 1K/2K/4K 分辨率纹理
-            │   └── Pink_*_Resolution.mat
-            ├── Skybox_2/             ← 绿色系天空盒
-            │   ├── Textures/
-            │   └── Green_*_Resolution.mat
-            ├── Skybox_3/             ← 紫色系天空盒
-            │   ├── Textures/
-            │   └── Purple_*_Resolution.mat
-            └── Demo/                 ← 演示脚本
+└── My_2022/
+    └── New Unity Project/
+        └── Assets/
+            └── SpaceSkies Free/          ← 解压 skybox_assets.zip 到这里
+                ├── Skybox_1/             ← 粉色系天空盒
+                │   ├── Textures/         ← 1K/2K/4K 分辨率纹理
+                │   └── Pink_*_Resolution.mat
+                ├── Skybox_2/             ← 绿色系天空盒
+                │   ├── Textures/
+                │   └── Green_*_Resolution.mat
+                ├── Skybox_3/             ← 紫色系天空盒
+                │   ├── Textures/
+                │   └── Purple_*_Resolution.mat
+                └── Demo/                 ← 演示脚本
 ```
 
 ---
@@ -232,16 +253,16 @@ cd EEG_AI_AR/AR
 **Windows (PowerShell):**
 ```powershell
 # 检查宇航员模型
-Test-Path "My project/Assets/Models/astronaut/source/Astronaut.glb"
+Test-Path "My_2022/New Unity Project/Assets/Models/astronaut/source/Astronaut.glb"
 
 # 检查月球纹理数量
-(Get-ChildItem "My project/Assets/Models/moon/textures/*.png").Count
+(Get-ChildItem "My_2022/New Unity Project/Assets/Models/moon/textures/*.png").Count
 
 # 检查音频文件
-Test-Path "My project/Assets/Audio/musiccc.mp3"
+Test-Path "My_2022/New Unity Project/Assets/Audio/musiccc.mp3"
 
 # 检查天空盒文件
-(Get-ChildItem "My project/Assets/SpaceSkies Free" -Directory).Count
+(Get-ChildItem "My_2022/New Unity Project/Assets/SpaceSkies Free" -Directory).Count
 
 # 预期输出:
 # 1. True (宇航员模型)
@@ -254,12 +275,12 @@ Test-Path "My project/Assets/Audio/musiccc.mp3"
 
 | 检查项 | 预期结果 |
 |--------|---------|
-| `My project/Assets/Models/astronaut/source/Astronaut.glb` 存在？ | ✅ 文件大小约 44 MB |
-| `My project/Assets/Models/astronaut/textures/` 有 11 张 png？ | ✅ |
-| `My project/Assets/Models/moon/textures/` 有 50+ 张 png？ | ✅ |
-| `My project/Assets/Models/moon/ph_moon.blend` 存在？（可选） | ✅ 约 1.8 GB |
-| `My project/Assets/Audio/musiccc.mp3` 存在？ | ✅ 约 10 MB |
-| `My project/Assets/SpaceSkies Free/` 存在？ | ✅ 包含 Skybox_1/2/3 目录 |
+| `My_2022/New Unity Project/Assets/Models/astronaut/source/Astronaut.glb` 存在？ | ✅ 文件大小约 44 MB |
+| `My_2022/New Unity Project/Assets/Models/astronaut/textures/` 有 11 张 png？ | ✅ |
+| `My_2022/New Unity Project/Assets/Models/moon/textures/` 有 50+ 张 png？ | ✅ |
+| `My_2022/New Unity Project/Assets/Models/moon/ph_moon.blend` 存在？（可选） | ✅ 约 1.8 GB |
+| `My_2022/New Unity Project/Assets/Audio/musiccc.mp3` 存在？ | ✅ 约 10 MB |
+| `My_2022/New Unity Project/Assets/SpaceSkies Free/` 存在？ | ✅ 包含 Skybox_1/2/3 目录 |
 
 ---
 
@@ -267,7 +288,7 @@ Test-Path "My project/Assets/Audio/musiccc.mp3"
 
 确认所有文件到位后：
 
-1. 用 **Unity Hub** 打开 `My project` 目录
+1. 用 **Unity Hub** 打开 `My_2022/New Unity Project` 目录
 2. 等待 Unity 导入新资产（首次可能需要 **5~15 分钟**，取决于硬盘速度）
 3. 打开 **Assets/Scenes/SampleScene.unity**
 4. 点击 **Play** 按钮预览
@@ -282,7 +303,7 @@ Test-Path "My project/Assets/Audio/musiccc.mp3"
 <summary><b>下载的文件放错位置了怎么办？</b></summary>
 
 Unity 对文件路径非常敏感。确保：
-- 宇航员 GLB 在 `My project/Assets/Models/astronaut/source/` 下（不是根目录的 `astronaut/`）
+- 宇航员 GLB 在 `My_2022/New Unity Project/Assets/Models/astronaut/source/` 下
 - 纹理 PNG 都在对应的 `textures/` 子目录中
 - 文件名**不要改名**（包括 `@channels=RGB` 这种特殊字符）
 
@@ -306,8 +327,8 @@ Unity 对文件路径非常敏感。确保：
 <summary><b>如何确认 Unity 已正确识别新放入的文件？</b></summary>
 
 在 Unity 的 Project 窗口中查看：
-- `Assets/Models/astronaut/source/` 下应显示 Astronaut 图标
-- `Assets/Models/moon/textures/` 下应显示大量纹理缩略图
+- `My_2022/New Unity Project/Assets/Models/astronaut/source/` 下应显示 Astronaut 图标
+- `My_2022/New Unity Project/Assets/Models/moon/textures/` 下应显示大量纹理缩略图
 - 如果显示为灰色问号图标，说明文件格式不被识别或路径错误
 
 </details>
@@ -365,14 +386,14 @@ Unity 对文件路径非常敏感。确保：
 
 ## 📦 资源说明
 
-### 宇航员模型 (`Assets/Models/astronaut/`)
+### 宇航员模型 (`My_2022/New Unity Project/Assets/Models/astronaut/`)
 
 | 文件 | 说明 | 大小 |
 |------|------|------|
-| [Astronaut.glb](My%20project/Assets/Models/astronaut/source/Astronaut.glb) | 主模型（含内嵌纹理） | ~44 MB |
+| Astronaut.glb | 主模型（含内嵌纹理） | ~44 MB |
 | `gltf_embedded_*.png` (11张) | 导出的 PBR 纹理通道 | ~11 MB |
 
-### 月球纹理 (`Assets/Models/moon/textures/`)
+### 月球纹理 (`My_2022/New Unity Project/Assets/Models/moon/textures/`)
 
 | 类型 | 文件命名示例 | 数量 | 总大小 |
 |------|-------------|------|--------|
@@ -385,15 +406,15 @@ Unity 对文件路径非常敏感。确保：
 | 特效 | `ph_grid/lens_dirt.png` | 2 张 | ~5 MB |
 | 其他 | `Marker_07`, `VisorScratch` | 2 张 | ~2 MB |
 
-> 📌 **Blender 源文件**: [ph_moon.blend](My%20project/Assets/Models/moon/ph_moon.blend) （可直接编辑材质节点，~1.8 GB）
+> 📌 **Blender 源文件**: ph_moon.blend （可直接编辑材质节点，~1.8 GB）
 
-### 音频文件 (`Assets/Audio/`)
+### 音频文件 (`My_2022/New Unity Project/Assets/Audio/`)
 
 | 文件 | 说明 | 大小 |
 |------|------|------|
 | `musiccc.mp3` | 背景音乐 | ~10 MB |
 
-### 天空盒纹理 (`Assets/SpaceSkies Free/`)
+### 天空盒纹理 (`My_2022/New Unity Project/Assets/SpaceSkies Free/`)
 
 | 类型 | 包含内容 | 分辨率 | 总大小 |
 |------|---------|--------|--------|
@@ -503,7 +524,7 @@ git push origin feature/xxx
 
 **正常现象**！大文件已被 `.gitignore` 排除。同事需要：
 1. 从云盘下载大文件（同第 2 步）
-2. 放置到 `My project/Assets/Models/` 对应目录
+2. 放置到 `My_2022/New Unity Project/Assets/Models/` 对应目录
 3. 重启 Unity 让其重新导入
 </details>
 
@@ -522,13 +543,21 @@ git push origin feature/xxx
 
 - [AGENTS.md](./AGENTS.md) — AI 助手开发详细指南
 - [.gitignore](./.gitignore) — Git 忽略规则完整列表
-- [Unity 6 官方文档](https://docs.unity3d.com/6000.0/Documentation/)
-- [URP 手册](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@17.4/manual/index.html)
+- [Unity 2022 LTS 官方文档](https://docs.unity3d.com/2022.3/Documentation/)
+- [URP 14 手册](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@14.0/manual/index.html)
 - [AR Foundation 指南](https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@latest)
 
 ---
 
 ## 📝 更新日志
+
+### v2.0 (2026-05-08)
+
+- 🔄 **重大更新**: 从 Unity 6 迁移至 Unity 2022 LTS (2022.3.62f3c1)
+- ✅ **URP 14.0.10**: 与 Rokid UXR 2.0 SDK 完全兼容
+- 📋 **TextMeshPro 3.0.9 配置完成**
+- 🗂️ 项目主目录迁移至 `My_2022/New Unity Project/`
+- 📖 更新所有文档和配置
 
 ### v1.2 (2026-04-14)
 
@@ -561,8 +590,8 @@ git push origin feature/xxx
 
 | 指标 | 数值 |
 |------|------|
-| Unity 版本 | 6000.4.1f1 |
-| URP 版本 | 17.4.0 |
+| Unity 版本 | 2022.3.62f3c1 (LTS) |
+| URP 版本 | 14.0.10 |
 | 核心脚本 | 8 个 (C#) |
 | 场景文件 | 1 个 |
 | 月球纹理 | 50+ 张 PBR |
@@ -578,7 +607,7 @@ git push origin feature/xxx
 
 **EEG_AI_AR Team** © 2026
 
-*最后更新: 2026-04-14*
+*最后更新: 2026-05-08*
 
 *本文档随项目同步更新，如有疑问请联系团队成员*
 

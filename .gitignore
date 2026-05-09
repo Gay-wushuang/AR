@@ -13,27 +13,30 @@ moon/
 # Main textures directory (moved to Assets/Models/... but keep for reference)
 textures/
 
-# My project/Assets/Models/ - large 3D files only (but keep .meta files!)
+# My_2022/New Unity Project/Assets/Models/ - large 3D files only (but keep .meta files!)
 # Note: .meta files are critical - DO NOT ignore them!
-My project/Assets/Models/astronaut/source/*.glb
-My project/Assets/Models/astronaut/source/*.gltf
-My project/Assets/Models/astronaut/source/*.fbx
-My project/Assets/Models/astronaut/textures/*.png
-My project/Assets/Models/astronaut/textures/*.jpg
-My project/Assets/Models/astronaut/textures/*.tga
+My_2022/New Unity Project/Assets/Models/astronaut/source/*.glb
+My_2022/New Unity Project/Assets/Models/astronaut/source/*.gltf
+My_2022/New Unity Project/Assets/Models/astronaut/source/*.fbx
+My_2022/New Unity Project/Assets/Models/astronaut/textures/*.png
+My_2022/New Unity Project/Assets/Models/astronaut/textures/*.jpg
+My_2022/New Unity Project/Assets/Models/astronaut/textures/*.tga
 
-My project/Assets/Models/moon/*.blend
-My project/Assets/Models/moon/textures/*.png
-My project/Assets/Models/moon/textures/*.jpg
-My project/Assets/Models/moon/textures/*.tga
+My_2022/New Unity Project/Assets/Models/moon/*.blend
+My_2022/New Unity Project/Assets/Models/moon/textures/*.png
+My_2022/New Unity Project/Assets/Models/moon/textures/*.jpg
+My_2022/New Unity Project/Assets/Models/moon/textures/*.tga
 
 # Audio files (music, sound effects)
-My project/Assets/Audio/*.mp3
-My project/Assets/Audio/*.wav
-My project/Assets/Audio/*.ogg
+My_2022/New Unity Project/Assets/Audio/*.mp3
+My_2022/New Unity Project/Assets/Audio/*.wav
+My_2022/New Unity Project/Assets/Audio/*.ogg
 
 # Skybox textures (SpaceSkies Free)
-My project/Assets/SpaceSkies Free/
+My_2022/New Unity Project/Assets/SpaceSkies Free/
+
+# TextMeshPro Examples (we don't need example scripts, they cause compilation errors)
+My_2022/New Unity Project/Assets/TextMesh Pro/Examples & Extras/
 
 # ============================================
 # Unity Generated
@@ -78,8 +81,12 @@ Desktop.ini
 *.userosscache
 *.suo
 *.cache
-*.dll
 *.pdb
+
+# 忽略一般的 DLL，但保留 Unity Plugins 文件夹下的 DLL
+*.dll
+!My_2022/New Unity Project/Assets/Plugins/*.dll
+!My_2022/New Unity Project/Assets/Plugins/**/*.dll
 
 # ============================================
 # Build Output
@@ -124,27 +131,45 @@ Logs/
 # ============================================
 # Large Binary Assets — handled by Git LFS
 # ============================================
-# My project/Assets/ contains Unity assets (tracked via LFS)
-# Only ignore cache/generated directories inside My project/
-My project/Library/
-My project/Temp/
-My project/Obj/
-My project/Build/
-My project/Logs/
-My project/MemoryCaptures/
-My project/UserSettings/
+# My_2022/New Unity Project/Assets/ contains Unity assets (tracked via LFS)
+# Only ignore cache/generated directories inside projects
+My_2022/New Unity Project/Library/
+My_2022/New Unity Project/Temp/
+My_2022/New Unity Project/Obj/
+My_2022/New Unity Project/Build/
+My_2022/New Unity Project/Logs/
+My_2022/New Unity Project/MemoryCaptures/
+My_2022/New Unity Project/UserSettings/
+My_2022/New Unity Project/Resources/
+
+# Old Unity 6 project directory (backup - entirely ignored)
+My project/
 
 # Old asset locations (already moved to Assets/Models/, directories no longer exist)
 
 # If you need to commit specific Unity config files, add exceptions below:
-# !My project/Packages/manifest.json
-# !My project/ProjectSettings/
+# !My_2022/New Unity Project/Packages/manifest.json
+# !My_2022/New Unity Project/ProjectSettings/
 
 # ============================================
 # Reference / Notes (optional - decide per project)
 # ============================================
 # *建议.md
 # *参考.md
+
+# ============================================
+# Internal Documents (not for version control)
+# ============================================
+# Research/proposal documents
+8~9.md
+附件4-1*.doc
+附件4-1*.docx
+
+# Internal notes and suggestions
+建议.md
+
+# Tool configuration files
+Unity 聊天系统生成提示词.md
 
 # ============================================
 # Windows System Files

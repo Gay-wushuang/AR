@@ -2,16 +2,23 @@
 
 ## 📋 项目概述
 
-**项目名称**: EEG_AI_AR (My project)
-**项目类型**: Unity 6 增强现实 (AR) 应用
-**Unity 版本**: 6000.4.0f1
-**渲染管线**: Universal Render Pipeline (URP) 17.4.0
+**项目名称**: EEG_AI_AR
+**项目类型**: Unity 2022 增强现实 (AR) 应用
+**Unity 版本**: 2022.3.62f3c1 (LTS)
+**渲染管线**: Universal Render Pipeline (URP) 14.0.10
 **目标平台**: **Rokid AR Lite (Station 2)** / 移动设备 / AR 设备
 **开发机配置**: i5-12600KF + RTX 4060 + 64GB DDR4 3600
 
 ### 项目描述
 
-这是一个基于 Unity 6 的 AR (增强现实) 项目，结合了脑电波 (EEG) 数据与人工智能 (AI) 技术，构建沉浸式的太空探索体验。项目包含完整的月球表面场景和高保真的宇航员角色模型，目标部署到 **Rokid AR Lite** 设备上运行。
+这是一个基于 **Unity 2022 LTS** 的 AR (增强现实) 项目，结合脑电波 (EEG) 数据与人工智能 (AI) 技术，构建沉浸式的月球探索体验。项目包含完整的月球表面场景和高保真的宇航员角色模型，目标部署到 **Rokid AR Lite** 设备上运行。
+
+### 🔄 迁移说明
+
+**已从 Unity 6 迁移至 Unity 2022 LTS**：
+- 确保与 **Rokid UXR 2.0 SDK** 的完全兼容性
+- Unity 2022 LTS 是 Rokid 官方推荐版本
+- 获得更稳定的长期支持和更好的设备兼容性
 
 ---
 
@@ -39,9 +46,9 @@
 | **UXR 2.0** ✅ | Unity 2020/2021/**2022 LTS** | **Station 2、AR Lite** ✅ | 基础4类手势(捏合/握拳/手掌/松开)、射线交互、远近场切换 |
 | UXR 3.0 | Unity 2022/**2023.3 LTS** | Station Pro、Max 2、AR Studio | +图像识别(扫二维码)、手势置信度过滤、模型轻量化30%、26骨骼点追踪 |
 
+> ✅ **已解决**: 项目已迁移至 Unity 2022 LTS，与 Rokid UXR 2.0 SDK 完全兼容！
+> 
 > ⚠️ **关键约束**: Rokid AR Lite (Station 2) 官方仅支持 **UXR 2.0**，最高兼容 **Unity 2022 LTS**。
-> 当前项目使用 Unity 6000.4.0f1 (Unity 6)，超出 UXR 2.0 支持范围。
-> **备选方案**: Station 2 同时支持标准 OpenXR 协议，可尝试 Unity 6 + OpenXR 路线（部分 Rokid 专属功能可能不可用）。
 
 ### Rokid SDK 家族
 ```
@@ -59,64 +66,76 @@ Rokid SDK 全家桶:
 
 ```
 AR/
-├── My project/                    # Unity 主项目目录
-│   ├── Assets/
-│   │   ├── Models/               # 模型目录
-│   │   ├── Scenes/               # Unity 场景文件
-│   │   │   └── SampleScene.unity # 示例场景
-│   │   ├── Scripts/              # C# 脚本
-│   │   │   ├── EnhanceMoonScene.cs    # 增强月球场景脚本
-│   │   │   └── SetupMoonSurface.cs    # 月球表面设置脚本
-│   │   ├── Settings/             # URP 和质量设置
-│   │   │   ├── Mobile_RPAsset.asset      # 移动端渲染管线资产
-│   │   │   ├── PC_RPAsset.asset          # PC 端渲染管线资产
-│   │   │   └── DefaultVolumeProfile.asset # 默认后处理配置
-│   │   └── TutorialInfo/         # 教程信息脚本
-│   ├── Packages/                 # 依赖包管理
-│   ├── ProjectSettings/          # 项目配置
-│   ├── Library/                  # Unity 缓存（不版本控制）
-│   ├── Temp/                     # 构建临时文件（不版本控制）
-│   └── UserSettings/             # 用户设置
-├── astronaut/                    # 宇航员 3D 资源
+├── My_2022/                            # ✅ Unity 2022 LTS 主项目目录
+│   └── New Unity Project/              # Unity 2022.3.62f3c1 项目
+│       ├── Assets/
+│       │   ├── Models/                 # 模型目录
+│       │   ├── Scenes/
+│       │   │   └── SampleScene.unity   # 示例场景
+│       │   ├── Scripts/                # C# 脚本
+│       │   │   ├── EnhanceMoonScene.cs # 增强月球场景脚本
+│       │   │   └── SetupMoonSurface.cs # 月球表面设置脚本
+│       │   ├── Settings/               # URP 和质量设置
+│       │   │   ├── Mobile_RPAsset.asset    # 移动端渲染管线资产
+│       │   │   ├── PC_RPAsset.asset        # PC 端渲染管线资产
+│       │   │   └── DefaultVolumeProfile.asset # 默认后处理配置
+│       │   └── TutorialInfo/           # 教程信息脚本
+│       ├── Packages/                   # 依赖包管理
+│       ├── ProjectSettings/            # 项目配置
+│       ├── Library/                    # Unity 缓存（不版本控制）
+│       ├── Temp/                       # 构建临时文件（不版本控制）
+│       └── UserSettings/               # 用户设置
+├── My project/                         # ⚠️ 旧版 Unity 6 项目（已废弃，保留备份）
+│   └── ...
+├── astronaut/                          # 宇航员 3D 资源
 │   ├── source/
-│   │   └── Astronaut.glb        # GLB 格式宇航员模型
-│   └── textures/                # 模型纹理贴图
-├── moon/                         # 月球场景资源
-│   ├── textures/                # 月球表面纹理集合
-│   │   ├── moon_02_diff/nor/rough/disp.png  # 月球基础材质
-│   │   ├── moon_footprints_02_*.png          # 足迹细节
-│   │   ├── moon_macro_01_*.png              # 宏观纹理
-│   │   ├── moon_meteor_01_*.png             # 陨石坑
-│   │   ├── moon_rock_01~07_*.png            # 岩石变体
-│   │   ├── earth_diff/norm.png              # 地球纹理
-│   │   └── ph_grid/lens_dirt.png            # 特效纹理
-│   └── ph_moon.blend            # Blender 源文件
-├── textures/                     # 月球和宇航员纹理资源（主目录）
-│   ├── earth_diff.png           # 地球漫反射
-│   ├── earth_norm.png           # 地球法线
-│   ├── Marker_07.png            # 标记纹理
-│   ├── moon_02_*.png            # 月球主体纹理（diff/nor/rough/disp）
-│   ├── moon_footprints_02_*.png # 足迹纹理
-│   ├── moon_macro_01_*.png      # 宏观地形纹理
-│   ├── moon_meteor_01_*.png     # 陨石坑纹理
-│   ├── moon_rock_01~07_*.png    # 岩石变体纹理
-│   ├── ph_grid.png              # 网格纹理
-│   ├── ph_lens_dirt.png         # 镜头污垢特效
-│   └── VisorScratch.png         # 面罩划痕细节
-├── AGENTS.md                     # 项目文档
-├── .gitattributes               # Git LFS 配置
-├── .gitignore                   # Git 忽略文件配置
-└── chatgpt建议.md               # 参考文档
+│   │   └── Astronaut.glb               # GLB 格式宇航员模型
+│   └── textures/                       # 模型纹理贴图
+├── moon/                               # 月球场景资源
+│   ├── textures/                       # 月球表面纹理集合
+│   │   ├── moon_02_diff/nor/rough/disp.png # 月球基础材质
+│   │   ├── moon_footprints_02_*.png         # 足迹细节
+│   │   ├── moon_macro_01_*.png             # 宏观纹理
+│   │   ├── moon_meteor_01_*.png            # 陨石坑
+│   │   ├── moon_rock_01~07_*.png           # 岩石变体
+│   │   ├── earth_diff/norm.png             # 地球纹理
+│   │   └── ph_grid/lens_dirt.png           # 特效纹理
+│   └── ph_moon.blend                   # Blender 源文件
+├── textures/                           # 月球和宇航员纹理资源（主目录）
+│   ├── earth_diff.png                  # 地球漫反射
+│   ├── earth_norm.png                  # 地球法线
+│   ├── Marker_07.png                   # 标记纹理
+│   ├── moon_02_*.png                   # 月球主体纹理（diff/nor/rough/disp）
+│   ├── moon_footprints_02_*.png        # 足迹纹理
+│   ├── moon_macro_01_*.png             # 宏观地形纹理
+│   ├── moon_meteor_01_*.png            # 陨石坑纹理
+│   ├── moon_rock_01~07_*.png           # 岩石变体纹理
+│   ├── ph_grid.png                     # 网格纹理
+│   ├── ph_lens_dirt.png                # 镜头污垢特效
+│   └── VisorScratch.png                # 面罩划痕细节
+├── AGENTS.md                           # 项目文档
+├── README.md                           # 项目说明
+├── .gitattributes                      # Git LFS 配置
+├── .gitignore                          # Git 忽略文件配置
+├── error.md                            # 编译错误日志
+└── chatgpt建议.md                      # 参考文档
 ```
+
+### 📁 项目目录说明
+
+| 目录 | 说明 | 状态 |
+|------|------|------|
+| `My_2022/New Unity Project/` | **当前使用的 Unity 2022 LTS 项目** | ✅ 活跃 |
+| `My project/` | 旧版 Unity 6 项目（备份） | ⚠️ 已废弃 |
 
 ---
 
 ## 🛠️ 技术栈
 
 ### 核心技术
-- **引擎**: Unity 6 (6000.4.0f1)
+- **引擎**: Unity 2022.3.62f3c1 (LTS)
 - **语言**: C# (.NET)
-- **渲染**: URP (Universal Render Pipeline) 17.4.0
+- **渲染**: URP (Universal Render Pipeline) 14.0.10
 - **脚本**: Visual Scripting + C#
 - **3D 格式**: GLB/GLTF, Blend (Blender)
 - **AR SDK**: UXR 2.0 (首选) / OpenXR (备选)
@@ -124,15 +143,16 @@ AR/
 ### 主要依赖包
 | 包名 | 版本 | 用途 |
 |------|------|------|
-| com.unity.render-pipelines.universal | 17.4.0 | 通用渲染管线 |
-| com.unity.inputsystem | 1.19.0 | 新输入系统 |
-| com.unity.ai.navigation | 2.0.11 | AI 导航 |
+| com.unity.render-pipelines.universal | 14.0.10 | 通用渲染管线 |
+| com.unity.inputsystem | 1.7.0 | 新输入系统 |
+| com.unity.ai.navigation | 1.1.5 | AI 导航 |
+| com.unity.textmeshpro | 3.0.9 | TextMeshPro 文本系统 |
 | com.unity.modules.vr | 1.0.0 | VR 支持 |
 | com.unity.modules.xr | 1.0.0 | XR 支持 |
-| com.unity.visualscripting | 1.9.10 | 可视化脚本 |
-| com.unity.timeline | 1.8.11 | 时间线动画 |
-| com.unity.multiplayer.center | 1.0.1 | 多人游戏支持 |
-| com.unity.ide.rider | 3.0.39 | Rider IDE 集成 |
+| com.unity.visualscripting | 1.9.1 | 可视化脚本 |
+| com.unity.timeline | 1.7.6 | 时间线动画 |
+| com.unity.ide.rider | 3.0.27 | Rider IDE 集成 |
+| com.atteneder.gltfast | 6.8.0 | GLTF/GLB 模型加载 |
 
 ### 开发工具
 - **IDE**: JetBrains Rider / Visual Studio
@@ -657,10 +677,10 @@ git commit -m "Add LFS tracking for new file type"
 
 ## 📚 学习资源
 
-- [Unity 6 官方文档](https://docs.unity3d.com/6000.0/Documentation/)
-- [URP 手册](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@17.4/manual/index.html)
+- [Unity 2022 LTS 官方文档](https://docs.unity3d.com/2022.3/Documentation/)
+- [URP 14 手册](https://docs.unity3d.com/Packages/com.unity.render-pipelines.universal@14.0/manual/index.html)
 - [AR Foundation 指南](https://docs.unity3d.com/Packages/com.unity.xr.arfoundation@latest)
-- [Input System 文档](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.9/api/)
+- [Input System 文档](https://docs.unity3d.com/Packages/com.unity.inputsystem@1.7/api/)
 - [Visual Scripting 参考](https://docs.unity3d.com/Packages/com.unity.visualscripting@1.9/manual/)
 - [Rokid AR Platform 开发文档](https://ar.rokid.com/doc)
 - [Rokid UXR SDK 文档](https://developer.rokid.com/)
@@ -687,7 +707,7 @@ git commit -m "Add LFS tracking for new file type"
 ## 📝 项目状态
 
 ### 当前完成情况
-- ✅ Unity 6 升级完成 (6000.4.0f1)
+- ✅ **Unity 2022 LTS 迁移完成** (2022.3.62f3c1)
 - ✅ URP 双渲染管线配置（Mobile/PC）
 - ✅ 纹理资源就绪 (textures/ 目录)
 - ✅ 场景搭建脚本就绪 (SetupMoonSurface.cs, EnhanceMoonScene.cs)
@@ -697,6 +717,7 @@ git commit -m "Add LFS tracking for new file type"
 - ✅ 开发策略确定: 两阶段工作流（先 PC 搭建场景，后移动端优化）
 - ✅ Rokid AR Lite 硬件规格调研完成
 - ✅ UXR SDK 兼容性分析完成 (AR Lite = UXR 2.0)
+- ✅ **TextMeshPro 已正确安装配置**
 - ⏳ 场景搭建中（第一阶段: PC 端验证）
 - ⏳ 模型导入与配置
 - ⏳ Android Build Support 模块待安装
@@ -722,4 +743,4 @@ git commit -m "Add LFS tracking for new file type"
 
 ---
 
-*最后更新: 2026-04-11*
+*最后更新: 2026-05-08*
