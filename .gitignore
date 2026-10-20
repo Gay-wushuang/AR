@@ -5,13 +5,13 @@
 # See README.md (📥 大文件下载与放置指南) for download and placement instructions.
 
 # Astronaut 3D assets (44MB GLB + textures)
-astronaut/
+/astronaut/
 
 # Moon 3D assets (1.8GB BLEND + textures)
-moon/
+/moon/
 
 # Main textures directory (moved to Assets/Models/... but keep for reference)
-textures/
+/textures/
 
 # My_2022/New Unity Project/Assets/Models/ - large 3D files only (but keep .meta files!)
 # Note: .meta files are critical - DO NOT ignore them!
@@ -181,3 +181,31 @@ aux
 com[0-9]
 lpt[0-9]
 realtime_inference/
+# Current project: shared binary assets are distributed separately; keep every .meta.
+/Resources/
+New Unity Project/Assets/**/*.blend
+New Unity Project/Assets/**/*.blend1
+New Unity Project/Assets/**/*.blend2
+New Unity Project/Assets/**/*.exr
+New Unity Project/Assets/**/*.fbx
+New Unity Project/Assets/**/*.glb
+New Unity Project/Assets/**/*.gltf
+New Unity Project/Assets/**/*.hdr
+New Unity Project/Assets/**/*.jpeg
+New Unity Project/Assets/**/*.jpg
+New Unity Project/Assets/**/*.mov
+New Unity Project/Assets/**/*.mp3
+New Unity Project/Assets/**/*.mp4
+New Unity Project/Assets/**/*.ogg
+New Unity Project/Assets/**/*.png
+New Unity Project/Assets/**/*.psd
+New Unity Project/Assets/**/*.tga
+New Unity Project/Assets/**/*.tif
+New Unity Project/Assets/**/*.tiff
+New Unity Project/Assets/**/*.wav
+New Unity Project/Assets/**/*.zip
+!New Unity Project/Assets/Plugins/**/*.dll
+!New Unity Project/Assets/Plugins/*.dll
+.env
+.env.*
+!.env.example

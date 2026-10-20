@@ -1,0 +1,674 @@
+[
+  {
+    "path": "New Unity Project/Assets/Audio/Cry for the moon.mp3",
+    "bytes": 4316927
+  },
+  {
+    "path": "New Unity Project/Assets/Audio/Look up to the Stars.mp3",
+    "bytes": 6998922
+  },
+  {
+    "path": "New Unity Project/Assets/Audio/Weightless.mp3",
+    "bytes": 11634387
+  },
+  {
+    "path": "New Unity Project/Assets/Audio/here39s-another-good-example.mp3",
+    "bytes": 103279
+  },
+  {
+    "path": "New Unity Project/Assets/Audio/科幻电流声_电流声_兹拉声_科幻_未来_能量_能量通道_爱给网_aigei_com.mp3",
+    "bytes": 77366
+  },
+  {
+    "path": "New Unity Project/Assets/Audio/警报声-嘟嘟嘟-游戏提示音_爱给网_aigei_com.mp3",
+    "bytes": 17285
+  },
+  {
+    "path": "New Unity Project/Assets/Models/ROKE.fbx",
+    "bytes": 42116268
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/source/Astronaut.glb",
+    "bytes": 46619328
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_0.png",
+    "bytes": 4361734
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_1@channels=A.png",
+    "bytes": 410100
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_1@channels=RGB.png",
+    "bytes": 414743
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_2.png",
+    "bytes": 1241284
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_3.png",
+    "bytes": 4169357
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_4.png",
+    "bytes": 5083399
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_5@channels=A.png",
+    "bytes": 403508
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_5@channels=RGB.png",
+    "bytes": 793131
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_6.png",
+    "bytes": 2751530
+  },
+  {
+    "path": "New Unity Project/Assets/Models/astronaut/textures/gltf_embedded_7.png",
+    "bytes": 4328056
+  },
+  {
+    "path": "New Unity Project/Assets/Models/gear-cog/source/SM_Gear.fbx",
+    "bytes": 87760
+  },
+  {
+    "path": "New Unity Project/Assets/Models/gear-cog/textures/Gear_Diff.png",
+    "bytes": 19351
+  },
+  {
+    "path": "New Unity Project/Assets/Models/gear-cog/textures/Gear_Spec.png",
+    "bytes": 22803
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/large rock-1.fbx",
+    "bytes": 320220
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/large rock-2.fbx",
+    "bytes": 120220
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/large rock-3.fbx",
+    "bytes": 188140
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/large rock-4.fbx",
+    "bytes": 248972
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/large rock-5.fbx",
+    "bytes": 315772
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/ph_moon.blend",
+    "bytes": 1867577405
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/ph_moon.blend1",
+    "bytes": 1868699801
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/rock-1.fbx",
+    "bytes": 59388
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/rock-2.fbx",
+    "bytes": 34028
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/rock-3.fbx",
+    "bytes": 42652
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/rock-4.fbx",
+    "bytes": 50220
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/rock-5.fbx",
+    "bytes": 58684
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/rock-6.fbx",
+    "bytes": 48140
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/rock-7.fbx",
+    "bytes": 47788
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/Marker_07.png",
+    "bytes": 24825
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/VisorScratch.png",
+    "bytes": 3065532
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/earth_diff.png",
+    "bytes": 10239097
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/earth_norm.png",
+    "bytes": 2600460
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_02_diff.png",
+    "bytes": 80783816
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_02_disp.png",
+    "bytes": 31628380
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_02_disp_blur.png",
+    "bytes": 11839171
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_02_nor_gl.png",
+    "bytes": 91745714
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_02_rough.png",
+    "bytes": 23153507
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_footprints_02_diff.png",
+    "bytes": 160694530
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_footprints_02_disp.png",
+    "bytes": 53675586
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_footprints_02_disp_mask3.png",
+    "bytes": 4222957
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_footprints_02_nor_gl.png",
+    "bytes": 178535780
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_footprints_02_rough.png",
+    "bytes": 49009123
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_macro_01_diff.png",
+    "bytes": 90332170
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_macro_01_disp.png",
+    "bytes": 29681427
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_macro_01_nor_gl.png",
+    "bytes": 95557530
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_macro_01_rough.png",
+    "bytes": 27537929
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_meteor_01_diff.png",
+    "bytes": 74628331
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_meteor_01_disp.png",
+    "bytes": 29120448
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_meteor_01_disp_blur.png",
+    "bytes": 8815347
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_meteor_01_nor_gl.png",
+    "bytes": 91287313
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_meteor_01_rough.png",
+    "bytes": 20462014
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_01_diff.png",
+    "bytes": 15347292
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_01_disp.png",
+    "bytes": 7361172
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_01_nor_gl.png",
+    "bytes": 16984167
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_01_rough.png",
+    "bytes": 5656286
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_02_diff.png",
+    "bytes": 17923665
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_02_disp.png",
+    "bytes": 6682994
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_02_nor_gl.png",
+    "bytes": 18076327
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_02_rough.png",
+    "bytes": 16459226
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_03_diff.png",
+    "bytes": 16076295
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_03_disp.png",
+    "bytes": 7389481
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_03_nor_gl.png",
+    "bytes": 17692014
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_03_rough.png",
+    "bytes": 5098259
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_04_ao.png",
+    "bytes": 4793884
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_04_diff.png",
+    "bytes": 15382224
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_04_disp.png",
+    "bytes": 6941978
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_04_nor_gl.png",
+    "bytes": 16334957
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_04_rough.png",
+    "bytes": 5001597
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_05_diff.png",
+    "bytes": 15477487
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_05_disp.png",
+    "bytes": 6677915
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_05_nor_gl.png",
+    "bytes": 16794257
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_05_rough.png",
+    "bytes": 4935086
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_06_diff.png",
+    "bytes": 16303420
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_06_disp.png",
+    "bytes": 4151774
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_06_nor_gl.png",
+    "bytes": 17506572
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_06_rough.png",
+    "bytes": 5692926
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_07_diff.png",
+    "bytes": 16449786
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_07_disp.png",
+    "bytes": 5128100
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_07_nor_gl.png",
+    "bytes": 17350653
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/moon_rock_07_rough.png",
+    "bytes": 5671449
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/ph_grid.png",
+    "bytes": 4234
+  },
+  {
+    "path": "New Unity Project/Assets/Models/moon/textures/ph_lens_dirt.png",
+    "bytes": 11852967
+  },
+  {
+    "path": "New Unity Project/Assets/Models/old_metal_jarry_can._fuel_canister/old_metal_jarry_can._fuel_canister.glb",
+    "bytes": 48760912
+  },
+  {
+    "path": "New Unity Project/Assets/Models/rocket/source/Rocket.fbx",
+    "bytes": 55573420
+  },
+  {
+    "path": "New Unity Project/Assets/Models/sci-fi-fuel-cell-canister/source/Fuel Cell1.blend",
+    "bytes": 1424532
+  },
+  {
+    "path": "New Unity Project/Assets/Models/卫星天线3d模型/tripo_convert_c00aa5f2-3e5d-4661-b5ee-89f06e28969a.fbm/tripo_rgb_a631626a-54ef-4f92-9073-baf6cec2c3bc.jpg",
+    "bytes": 12908832
+  },
+  {
+    "path": "New Unity Project/Assets/Models/卫星天线3d模型/tripo_convert_c00aa5f2-3e5d-4661-b5ee-89f06e28969a.fbx",
+    "bytes": 1477644
+  },
+  {
+    "path": "New Unity Project/Assets/Models/太空舱3d模型/tripo_convert_d545df9a-84dd-4c89-b62a-8f8de6eb4326.fbm/tripo_rgb_3623a817-13f5-4207-b0e8-ead93c7ce789.jpg",
+    "bytes": 10459083
+  },
+  {
+    "path": "New Unity Project/Assets/Models/太空舱3d模型/tripo_convert_d545df9a-84dd-4c89-b62a-8f8de6eb4326.fbx",
+    "bytes": 1369532
+  },
+  {
+    "path": "New Unity Project/Assets/Models/控制台3d模型/tripo_convert_bbd9e3d1-1672-4cd8-9207-77415c1132e0.fbm/tripo_rgb_9bea66fc-04ad-491d-9d99-8a72d5aee9d8.jpg",
+    "bytes": 12969257
+  },
+  {
+    "path": "New Unity Project/Assets/Models/控制台3d模型/tripo_convert_bbd9e3d1-1672-4cd8-9207-77415c1132e0.fbx",
+    "bytes": 1433596
+  },
+  {
+    "path": "New Unity Project/Assets/Models/氧气罐3d模型/tripo_convert_b2bf8aec-8680-412c-9dcb-dfd16dcaa38c.fbm/tripo_rgb_d5fd7b37-282b-4637-b2fc-e46a4ddd412c.jpg",
+    "bytes": 11012592
+  },
+  {
+    "path": "New Unity Project/Assets/Models/氧气罐3d模型/tripo_convert_b2bf8aec-8680-412c-9dcb-dfd16dcaa38c.fbx",
+    "bytes": 346972
+  },
+  {
+    "path": "New Unity Project/Assets/Models/科幻工具箱3d模型/科幻工具箱3d模型.fbx",
+    "bytes": 1106000
+  },
+  {
+    "path": "New Unity Project/Assets/Models/能量电源3d模型/tripo_convert_3ae30049-4edb-45f5-93a8-fd06059fbb85.fbm/tripo_rgb_aa54f273-e9c2-46a8-94df-73ffd5180f98.jpg",
+    "bytes": 11032009
+  },
+  {
+    "path": "New Unity Project/Assets/Models/能量电源3d模型/tripo_convert_3ae30049-4edb-45f5-93a8-fd06059fbb85.fbx",
+    "bytes": 1318060
+  },
+  {
+    "path": "New Unity Project/Assets/Models/货运舱3d模型/tripo_convert_625dbe51-cadb-4137-bc21-85e32a8823ef.fbm/tripo_rgb_75f0238a-b957-492f-a662-0a6a8901bb5c.jpg",
+    "bytes": 14939231
+  },
+  {
+    "path": "New Unity Project/Assets/Models/货运舱3d模型/tripo_convert_625dbe51-cadb-4137-bc21-85e32a8823ef.fbx",
+    "bytes": 314764
+  },
+  {
+    "path": "New Unity Project/Assets/Models/载人火箭/tripo_convert_eb147648-f2da-4589-b7f3-b057a6f858c4.fbm/tripo_normal_2afc304c-80d4-4082-a156-96ec185555e7.jpg",
+    "bytes": 1491206
+  },
+  {
+    "path": "New Unity Project/Assets/Models/载人火箭/tripo_convert_eb147648-f2da-4589-b7f3-b057a6f858c4.fbm/tripo_rgb_2201bfbf-120b-4626-8469-38c62d0e6e8f.jpg",
+    "bytes": 10524617
+  },
+  {
+    "path": "New Unity Project/Assets/Models/载人火箭/tripo_convert_eb147648-f2da-4589-b7f3-b057a6f858c4.fbm/火箭3d模型_metallic.JPEG",
+    "bytes": 2153497
+  },
+  {
+    "path": "New Unity Project/Assets/Models/载人火箭/tripo_convert_eb147648-f2da-4589-b7f3-b057a6f858c4.fbm/火箭3d模型_roughness.JPEG",
+    "bytes": 2080286
+  },
+  {
+    "path": "New Unity Project/Assets/Models/载人火箭/tripo_convert_eb147648-f2da-4589-b7f3-b057a6f858c4.fbx",
+    "bytes": 1424988
+  },
+  {
+    "path": "New Unity Project/Assets/Scenes/SampleScene/ReflectionProbe-0.exr",
+    "bytes": 521312
+  },
+  {
+    "path": "New Unity Project/Assets/Scenes/SampleScene/ReflectionProbe-1.exr",
+    "bytes": 163865
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/1K_Resolution/Back_1K_TEX.png",
+    "bytes": 1545889
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/1K_Resolution/Down_1K_TEX.png",
+    "bytes": 1526361
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/1K_Resolution/Front_1K_TEX.png",
+    "bytes": 1723268
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/1K_Resolution/Left_1K_TEX.png",
+    "bytes": 1511704
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/1K_Resolution/Right_1K_TEX.png",
+    "bytes": 1655502
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/1K_Resolution/Up_1K_TEX.png",
+    "bytes": 1625489
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/2K_Resolution/Back_2K_TEX.png",
+    "bytes": 5573339
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/2K_Resolution/Down_2K_TEX.png",
+    "bytes": 5435029
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/2K_Resolution/Front_2K_TEX.png",
+    "bytes": 6250763
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/2K_Resolution/Left_2K_TEX.png",
+    "bytes": 5327812
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/2K_Resolution/Right_2K_TEX.png",
+    "bytes": 6037190
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/2K_Resolution/Up_2K_TEX.png",
+    "bytes": 5833579
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/4K_Resolution/Back_4K_TEX.png",
+    "bytes": 18412117
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/4K_Resolution/Down_4K_TEX.png",
+    "bytes": 17889452
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/4K_Resolution/Front_4K_TEX.png",
+    "bytes": 20941927
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/4K_Resolution/Left_4K_TEX.png",
+    "bytes": 17541855
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/4K_Resolution/Right_4K_TEX.png",
+    "bytes": 20468598
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_1/Textures/4K_Resolution/Up_4K_TEX.png",
+    "bytes": 19382609
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/1K_Resolution/Back_1K_TEX.png",
+    "bytes": 2200732
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/1K_Resolution/Down_1K_TEX.png",
+    "bytes": 2068159
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/1K_Resolution/Front_1K_TEX.png",
+    "bytes": 1805247
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/1K_Resolution/Left_1K_TEX.png",
+    "bytes": 1882201
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/1K_Resolution/Right_1K_TEX.png",
+    "bytes": 2025706
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/1K_Resolution/Up_1K_TEX.png",
+    "bytes": 2112477
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/2K_Resolution/Back_2K_TEX.png",
+    "bytes": 8469316
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/2K_Resolution/Down_2K_TEX.png",
+    "bytes": 8071608
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/2K_Resolution/Front_2K_TEX.png",
+    "bytes": 6960722
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/2K_Resolution/Left_2K_TEX.png",
+    "bytes": 7217638
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/2K_Resolution/Right_2K_TEX.png",
+    "bytes": 7675683
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/2K_Resolution/Up_2K_TEX.png",
+    "bytes": 8067989
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/4K_Resolution/Back_4K_TEX.png",
+    "bytes": 31723822
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/4K_Resolution/Down_4K_TEX.png",
+    "bytes": 30189773
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/4K_Resolution/Front_4K_TEX.png",
+    "bytes": 24804284
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/4K_Resolution/Left_4K_TEX.png",
+    "bytes": 25824854
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/4K_Resolution/Right_4K_TEX.png",
+    "bytes": 29037187
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_2/Textures/4K_Resolution/Up_4K_TEX.png",
+    "bytes": 30347883
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/1K_Resolution/Back_1K_TEX.png",
+    "bytes": 990209
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/1K_Resolution/Down_1K_TEX.png",
+    "bytes": 925445
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/1K_Resolution/Front_1K_TEX.png",
+    "bytes": 1599222
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/1K_Resolution/Left_1K_TEX.png",
+    "bytes": 904384
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/1K_Resolution/Right_1K_TEX.png",
+    "bytes": 1415854
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/1K_Resolution/Up_1K_TEX.png",
+    "bytes": 846882
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/2K_Resolution/Back_2K_TEX.png",
+    "bytes": 3696200
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/2K_Resolution/Down_2K_TEX.png",
+    "bytes": 3241437
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/2K_Resolution/Front_2K_TEX.png",
+    "bytes": 5836727
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/2K_Resolution/Left_2K_TEX.png",
+    "bytes": 3332619
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/2K_Resolution/Right_2K_TEX.png",
+    "bytes": 5490341
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/2K_Resolution/Up_2K_TEX.png",
+    "bytes": 3160614
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/4K_Resolution/Back_4K_TEX.png",
+    "bytes": 12438309
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/4K_Resolution/Down_4K_TEX.png",
+    "bytes": 10388058
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/4K_Resolution/Front_4K_TEX.png",
+    "bytes": 20271503
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/4K_Resolution/Left_4K_TEX.png",
+    "bytes": 11166202
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/4K_Resolution/Right_4K_TEX.png",
+    "bytes": 19870018
+  },
+  {
+    "path": "New Unity Project/Assets/SpaceSkies Free/Skybox_3/Textures/4K_Resolution/Up_4K_TEX.png",
+    "bytes": 10797493
+  },
+  {
+    "path": "New Unity Project/Assets/TextMesh Pro/Sprites/EmojiOne.png",
+    "bytes": 112319
+  },
+  {
+    "path": "New Unity Project/Assets/TutorialInfo/Icons/URP.png",
+    "bytes": 133
+  }
+]

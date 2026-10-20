@@ -1,3 +1,5 @@
+> 2026-10-20 当前入口：`New Unity Project/`。最新玩法、资源路径和协作方式见 `Docs/TEAM_GUIDE.md` 与 `Docs/RESOURCE_PATHS.md`；下文旧目录布局及一天 Demo 计划为历史背景。
+
 # EEG_AI_AR Project - Agent Guide
 
 ## 📋 项目概述
