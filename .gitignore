@@ -5,35 +5,38 @@
 # See README.md (📥 大文件下载与放置指南) for download and placement instructions.
 
 # Astronaut 3D assets (44MB GLB + textures)
-astronaut/
+/astronaut/
 
 # Moon 3D assets (1.8GB BLEND + textures)
-moon/
+/moon/
 
 # Main textures directory (moved to Assets/Models/... but keep for reference)
-textures/
+/textures/
 
-# My project/Assets/Models/ - large 3D files only (but keep .meta files!)
+# My_2022/New Unity Project/Assets/Models/ - large 3D files only (but keep .meta files!)
 # Note: .meta files are critical - DO NOT ignore them!
-My project/Assets/Models/astronaut/source/*.glb
-My project/Assets/Models/astronaut/source/*.gltf
-My project/Assets/Models/astronaut/source/*.fbx
-My project/Assets/Models/astronaut/textures/*.png
-My project/Assets/Models/astronaut/textures/*.jpg
-My project/Assets/Models/astronaut/textures/*.tga
+My_2022/New Unity Project/Assets/Models/astronaut/source/*.glb
+My_2022/New Unity Project/Assets/Models/astronaut/source/*.gltf
+My_2022/New Unity Project/Assets/Models/astronaut/source/*.fbx
+My_2022/New Unity Project/Assets/Models/astronaut/textures/*.png
+My_2022/New Unity Project/Assets/Models/astronaut/textures/*.jpg
+My_2022/New Unity Project/Assets/Models/astronaut/textures/*.tga
 
-My project/Assets/Models/moon/*.blend
-My project/Assets/Models/moon/textures/*.png
-My project/Assets/Models/moon/textures/*.jpg
-My project/Assets/Models/moon/textures/*.tga
+My_2022/New Unity Project/Assets/Models/moon/*.blend
+My_2022/New Unity Project/Assets/Models/moon/textures/*.png
+My_2022/New Unity Project/Assets/Models/moon/textures/*.jpg
+My_2022/New Unity Project/Assets/Models/moon/textures/*.tga
 
 # Audio files (music, sound effects)
-My project/Assets/Audio/*.mp3
-My project/Assets/Audio/*.wav
-My project/Assets/Audio/*.ogg
+My_2022/New Unity Project/Assets/Audio/*.mp3
+My_2022/New Unity Project/Assets/Audio/*.wav
+My_2022/New Unity Project/Assets/Audio/*.ogg
 
 # Skybox textures (SpaceSkies Free)
-My project/Assets/SpaceSkies Free/
+My_2022/New Unity Project/Assets/SpaceSkies Free/
+
+# TextMeshPro Examples (we don't need example scripts, they cause compilation errors)
+My_2022/New Unity Project/Assets/TextMesh Pro/Examples & Extras/
 
 # ============================================
 # Unity Generated
@@ -82,8 +85,8 @@ Desktop.ini
 
 # 忽略一般的 DLL，但保留 Unity Plugins 文件夹下的 DLL
 *.dll
-!My project/Assets/Plugins/*.dll
-!My project/Assets/Plugins/**/*.dll
+!My_2022/New Unity Project/Assets/Plugins/*.dll
+!My_2022/New Unity Project/Assets/Plugins/**/*.dll
 
 # ============================================
 # Build Output
@@ -128,22 +131,25 @@ Logs/
 # ============================================
 # Large Binary Assets — handled by Git LFS
 # ============================================
-# My project/Assets/ contains Unity assets (tracked via LFS)
-# Only ignore cache/generated directories inside My project/
-My project/Library/
-My project/Temp/
-My project/Obj/
-My project/Build/
-My project/Logs/
-My project/MemoryCaptures/
-My project/UserSettings/
-Resources/
+# My_2022/New Unity Project/Assets/ contains Unity assets (tracked via LFS)
+# Only ignore cache/generated directories inside projects
+My_2022/New Unity Project/Library/
+My_2022/New Unity Project/Temp/
+My_2022/New Unity Project/Obj/
+My_2022/New Unity Project/Build/
+My_2022/New Unity Project/Logs/
+My_2022/New Unity Project/MemoryCaptures/
+My_2022/New Unity Project/UserSettings/
+My_2022/New Unity Project/Resources/
+
+# Old Unity 6 project directory (backup - entirely ignored)
+My project/
 
 # Old asset locations (already moved to Assets/Models/, directories no longer exist)
 
 # If you need to commit specific Unity config files, add exceptions below:
-# !My project/Packages/manifest.json
-# !My project/ProjectSettings/
+# !My_2022/New Unity Project/Packages/manifest.json
+# !My_2022/New Unity Project/ProjectSettings/
 
 # ============================================
 # Reference / Notes (optional - decide per project)
@@ -175,3 +181,31 @@ aux
 com[0-9]
 lpt[0-9]
 realtime_inference/
+# Current project: shared binary assets are distributed separately; keep every .meta.
+/Resources/
+New Unity Project/Assets/**/*.blend
+New Unity Project/Assets/**/*.blend1
+New Unity Project/Assets/**/*.blend2
+New Unity Project/Assets/**/*.exr
+New Unity Project/Assets/**/*.fbx
+New Unity Project/Assets/**/*.glb
+New Unity Project/Assets/**/*.gltf
+New Unity Project/Assets/**/*.hdr
+New Unity Project/Assets/**/*.jpeg
+New Unity Project/Assets/**/*.jpg
+New Unity Project/Assets/**/*.mov
+New Unity Project/Assets/**/*.mp3
+New Unity Project/Assets/**/*.mp4
+New Unity Project/Assets/**/*.ogg
+New Unity Project/Assets/**/*.png
+New Unity Project/Assets/**/*.psd
+New Unity Project/Assets/**/*.tga
+New Unity Project/Assets/**/*.tif
+New Unity Project/Assets/**/*.tiff
+New Unity Project/Assets/**/*.wav
+New Unity Project/Assets/**/*.zip
+!New Unity Project/Assets/Plugins/**/*.dll
+!New Unity Project/Assets/Plugins/*.dll
+.env
+.env.*
+!.env.example
