@@ -34,7 +34,6 @@ namespace EEGAI.AI.LLM
 
         [Header("Performance")]
         [SerializeField] private int requestTimeoutSeconds = 15;
-        [SerializeField] private int maxRetries = 3;
 
         private string _currentApiKey;
         private string _currentModel;

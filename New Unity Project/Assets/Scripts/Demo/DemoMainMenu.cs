@@ -12,6 +12,7 @@ namespace EEGAI.Demo
         private float volume = 0.8f;
         private float mouseSensitivity = 2f;
         private string eegStatus = "EEG services will start with mission";
+        private float nextEEGStatusRefresh;
         public static bool PauseMenuOpen { get; private set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
@@ -34,6 +35,13 @@ namespace EEGAI.Demo
 
         private void Update()
         {
+            if ((showSettings || PauseMenuOpen) && Time.realtimeSinceStartup >= nextEEGStatusRefresh)
+            {
+                DemoEEGServiceLauncher.TestRealtimeDataFlow();
+                eegStatus = DemoEEGServiceLauncher.LastStatus;
+                nextEEGStatusRefresh = Time.realtimeSinceStartup + 0.5f;
+            }
+
             if (gameState == null)
             {
                 gameState = FindAnyObjectByType<DemoGameState>();
@@ -286,8 +294,8 @@ namespace EEGAI.Demo
             GUILayout.BeginHorizontal();
             if (GUILayout.Button("Test Data Flow", GUILayout.Height(34)))
             {
-                bool live = DemoEEGServiceLauncher.TestRealtimeDataFlow();
-                eegStatus = live ? "Realtime EEG data is live" : DemoEEGServiceLauncher.LastStatus;
+                DemoEEGServiceLauncher.TestRealtimeDataFlow();
+                eegStatus = DemoEEGServiceLauncher.LastStatus;
             }
 
             if (GUILayout.Button("Restart EEG Services", GUILayout.Height(34)))

@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -96,31 +96,70 @@ namespace EEGAI.Demo
         private IEnumerator LaunchSequence()
         {
             isLaunching = true;
+
+            if (gameState == null)
+            {
+                gameState = FindAnyObjectByType<DemoGameState>();
+            }
+
+            if (gameState == null)
+            {
+                Debug.LogError("[Demo] Cannot launch rocket: DemoGameState was not found.");
+                isLaunching = false;
+                yield break;
+            }
+
             gameState.BeginLaunch();
-            SetAstronautModelsVisible(false);
-            ActivateLaunchCamera();
-            EnsureExhaust();
-            exhaust.Play();
+
+            // Visual effects must never be able to abort the launch/victory flow.
+            try
+            {
+                SetAstronautModelsVisible(false);
+                ActivateLaunchCamera();
+                EnsureExhaust();
+                if (exhaust != null) exhaust.Play();
+            }
+            catch (System.Exception exception)
+            {
+                Debug.LogWarning($"[Demo] Rocket effects failed, continuing launch: {exception.Message}");
+            }
 
             Vector3 start = initialRocketPosition;
             Vector3 end = initialRocketPosition + Vector3.up * launchHeight;
-            float elapsed = 0f;
 
-            while (elapsed < launchDuration)
+            try
             {
-                elapsed += Time.deltaTime;
-                float t = Mathf.Clamp01(elapsed / launchDuration);
-                float eased = launchCurve != null ? launchCurve.Evaluate(t) : t;
+                float elapsed = 0f;
+                while (elapsed < launchDuration)
+                {
+                    elapsed += Time.deltaTime;
+                    float t = Mathf.Clamp01(elapsed / launchDuration);
+                    float eased = launchCurve != null ? launchCurve.Evaluate(t) : t;
 
-                transform.position = Vector3.Lerp(start, end, eased);
-                transform.rotation = initialRocketRotation;
+                    transform.position = Vector3.Lerp(start, end, eased);
+                    transform.rotation = initialRocketRotation;
 
-                yield return null;
+                    yield return null;
+                }
+
+                transform.position = end;
             }
+            finally
+            {
+                if (exhaust != null)
+                {
+                    exhaust.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+                }
 
-            transform.position = end;
-            exhaust.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-            gameState.CompleteLaunch();
+                isLaunching = false;
+
+                // If ResetLaunch/ResetGame stopped this coroutine, the state is no longer
+                // Launching and must not be converted back into a victory.
+                if (gameState != null && gameState.Status == DemoGameState.GameStatus.Launching)
+                {
+                    gameState.CompleteLaunch();
+                }
+            }
         }
 
         public void ResetLaunch()
@@ -182,10 +221,25 @@ namespace EEGAI.Demo
             gradient.SetKeys(new[] { new GradientColorKey(Color.white, 0f), new GradientColorKey(new Color(1f, 0.3f, 0.02f), 1f) },
                 new[] { new GradientAlphaKey(1f, 0f), new GradientAlphaKey(0f, 1f) });
             color.color = gradient;
-            exhaustMaterial = new Material(Shader.Find("Universal Render Pipeline/Particles/Unlit"));
+            var particleRenderer = exhaust.GetComponent<ParticleSystemRenderer>();
+
+            // Shader.Find only works in a build when the shader is included in the build.
+            // Keep a fallback chain and never pass null to the Material constructor.
+            Shader exhaustShader = Shader.Find("Universal Render Pipeline/Particles/Unlit")
+                ?? Shader.Find("Universal Render Pipeline/Unlit")
+                ?? Shader.Find("Sprites/Default")
+                ?? Shader.Find("Unlit/Color")
+                ?? Shader.Find("Standard");
+
+            if (exhaustShader == null)
+            {
+                Debug.LogWarning("[Demo] Rocket exhaust shader was stripped from the build; launching without exhaust material.");
+                return;
+            }
+
+            exhaustMaterial = new Material(exhaustShader);
             ConfigureTransparentMaterial(exhaustMaterial);
             SetMaterialColor(exhaustMaterial, Color.white);
-            var particleRenderer = exhaust.GetComponent<ParticleSystemRenderer>();
             particleRenderer.sharedMaterial = exhaustMaterial;
             particleRenderer.renderMode = ParticleSystemRenderMode.Stretch;
             particleRenderer.lengthScale = 2f;

@@ -12,6 +12,7 @@ namespace EEGAI.Demo
         [SerializeField] private float decayRate = 1.5f;
         [SerializeField] private float recoveryRate = 3f;
         [SerializeField] private float meditateRate = 20f;
+        private const float externalStaleSeconds = 2.5f;
 
         [Header("Emotion Effects")]
         [SerializeField] private float happyMeditationPenalty = 0.8f;
@@ -19,11 +20,19 @@ namespace EEGAI.Demo
 
         public float CurrentMeditation { get; private set; }
         public float NormalizedMeditation => CurrentMeditation / maxMeditation;
+        public bool HasExternalData => hasExternalData;
+        public bool ExternalDataLive => hasExternalData &&
+            Time.unscaledTime - lastExternalUpdate <= externalStaleSeconds;
+        public float ExternalDataAge => hasExternalData
+            ? Time.unscaledTime - lastExternalUpdate
+            : float.PositiveInfinity;
 
         public event System.Action<float> OnMeditationChanged;
 
         private DemoEmotionSimulator emotionSimulator;
         private bool isMeditating = false;
+        private bool hasExternalData;
+        private float lastExternalUpdate;
 
         private void Awake()
         {
@@ -51,6 +60,17 @@ namespace EEGAI.Demo
 
         private void UpdateMeditation()
         {
+            // Real eSense meditation is held between device samples; the simulator
+            // only runs when no real EEG value has ever been received.
+            if (hasExternalData)
+            {
+                if (ExternalDataLive)
+                {
+                    OnMeditationChanged?.Invoke(CurrentMeditation);
+                }
+                return;
+            }
+
             float emotionModifier = 1f;
 
             if (emotionSimulator != null)
@@ -97,6 +117,8 @@ namespace EEGAI.Demo
 
         public void SetExternalMeditation(float value)
         {
+            hasExternalData = true;
+            lastExternalUpdate = Time.unscaledTime;
             CurrentMeditation = Mathf.Clamp(value, minMeditation, maxMeditation);
             OnMeditationChanged?.Invoke(CurrentMeditation);
         }
@@ -113,7 +135,10 @@ namespace EEGAI.Demo
 
             GUILayout.Label($"🧘 Meditation: {CurrentMeditation:F0}/{maxMeditation:F0}");
             GUILayout.Label($"Normalized: {NormalizedMeditation:P0}");
-            GUILayout.Label(isMeditating ? "[ALT] Meditating..." : "Press ALT to meditate");
+            GUILayout.Label(hasExternalData
+                ? (ExternalDataLive ? "Source: EEG eSense (live)" : $"Source: EEG eSense (stale {ExternalDataAge:F1}s)")
+                : "Source: simulator (no EEG yet)");
+            GUILayout.Label(isMeditating ? "[ALT] Meditating..." : "Press ALT to meditate (simulator only)");
 
             GUILayout.EndVertical();
             GUILayout.EndArea();

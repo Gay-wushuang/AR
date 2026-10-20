@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="600" viewBox="0 0 1200 600">
+  <defs>
+    <linearGradient id="gradMainMenu" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#6366f1;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4f46e5;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradPlaying" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#22c55e;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#16a34a;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradReady" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f59e0b;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#d97706;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradLaunching" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#8b5cf6;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#7c3aed;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradVictory" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#059669;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="gradGameOver" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#ef4444;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#dc2626;stop-opacity:1" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="4" dy="4" stdDeviation="4" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+
+  <rect width="1200" height="600" fill="#ffffff"/>
+
+  <text x="600" y="40" font-family="Microsoft YaHei, SimHei" font-size="24" font-weight="bold" text-anchor="middle" fill="#1f2937">
+    图4.1 游戏状态流转效果图
+  </text>
+
+  <g transform="translate(100, 250)">
+    <rect x="0" y="-35" width="140" height="70" rx="15" ry="15" fill="url(#gradMainMenu)" filter="url(#shadow)"/>
+    <text x="70" y="-10" font-family="Microsoft YaHei, SimHei" font-size="14" font-weight="bold" text-anchor="middle" fill="white">MainMenu</text>
+    <text x="70" y="12" font-family="Microsoft YaHei, SimHei" font-size="12" text-anchor="middle" fill="white">主菜单</text>
+  </g>
+
+  <g transform="translate(300, 250)">
+    <rect x="0" y="-35" width="140" height="70" rx="15" ry="15" fill="url(#gradPlaying)" filter="url(#shadow)"/>
+    <text x="70" y="-10" font-family="Microsoft YaHei, SimHei" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Playing</text>
+    <text x="70" y="12" font-family="Microsoft YaHei, SimHei" font-size="12" text-anchor="middle" fill="white">游戏中</text>
+  </g>
+
+  <g transform="translate(520, 150)">
+    <rect x="0" y="-35" width="140" height="70" rx="15" ry="15" fill="url(#gradReady)" filter="url(#shadow)"/>
+    <text x="70" y="-10" font-family="Microsoft YaHei, SimHei" font-size="14" font-weight="bold" text-anchor="middle" fill="white">ReadyToLaunch</text>
+    <text x="70" y="12" font-family="Microsoft YaHei, SimHei" font-size="12" text-anchor="middle" fill="white">准备发射</text>
+  </g>
+
+  <g transform="translate(740, 150)">
+    <rect x="0" y="-35" width="140" height="70" rx="15" ry="15" fill="url(#gradLaunching)" filter="url(#shadow)"/>
+    <text x="70" y="-10" font-family="Microsoft YaHei, SimHei" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Launching</text>
+    <text x="70" y="12" font-family="Microsoft YaHei, SimHei" font-size="12" text-anchor="middle" fill="white">发射中</text>
+  </g>
+
+  <g transform="translate(960, 150)">
+    <rect x="0" y="-35" width="140" height="70" rx="15" ry="15" fill="url(#gradVictory)" filter="url(#shadow)"/>
+    <text x="70" y="-10" font-family="Microsoft YaHei, SimHei" font-size="14" font-weight="bold" text-anchor="middle" fill="white">Victory</text>
+    <text x="70" y="12" font-family="Microsoft YaHei, SimHei" font-size="12" text-anchor="middle" fill="white">胜利</text>
+  </g>
+
+  <g transform="translate(960, 380)">
+    <rect x="0" y="-35" width="140" height="70" rx="15" ry="15" fill="url(#gradGameOver)" filter="url(#shadow)"/>
+    <text x="70" y="-10" font-family="Microsoft YaHei, SimHei" font-size="14" font-weight="bold" text-anchor="middle" fill="white">GameOver</text>
+    <text x="70" y="12" font-family="Microsoft YaHei, SimHei" font-size="12" text-anchor="middle" fill="white">失败</text>
+  </g>
+
+  <line x1="50" y1="250" x2="100" y2="250" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="100,250 90,245 90,255" fill="#6b7280"/>
+  <text x="70" y="240" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">游戏启动</text>
+
+  <line x1="240" y1="250" x2="300" y2="250" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="300,250 290,245 290,255" fill="#6b7280"/>
+  <text x="270" y="240" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">StartGame()</text>
+  <text x="270" y="255" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">重置+启动EEG</text>
+
+  <path d="M 440 250 Q 480 200 520 185" stroke="#6b7280" stroke-width="2" fill="none"/>
+  <polygon points="520,185 510,190 515,180" fill="#6b7280"/>
+  <text x="480" y="200" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">修复所有节点</text>
+
+  <path d="M 440 285 Q 720 360 960 415" stroke="#6b7280" stroke-width="2" fill="none"/>
+  <polygon points="960,415 955,405 950,412" fill="#6b7280"/>
+  <text x="700" y="350" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">氧气耗尽</text>
+
+  <line x1="660" y1="150" x2="740" y2="150" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="740,150 730,145 730,155" fill="#6b7280"/>
+  <text x="700" y="140" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">BeginLaunch()</text>
+  <text x="700" y="155" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">点击发射</text>
+
+  <path d="M 660 185 Q 820 260 960 415" stroke="#6b7280" stroke-width="2" fill="none"/>
+  <polygon points="960,415 952,408 955,418" fill="#6b7280"/>
+  <text x="820" y="280" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">氧气耗尽</text>
+
+  <line x1="880" y1="150" x2="960" y2="150" stroke="#6b7280" stroke-width="2"/>
+  <polygon points="960,150 950,145 950,155" fill="#6b7280"/>
+  <text x="920" y="140" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">CompleteLaunch()</text>
+  <text x="920" y="155" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">发射完成</text>
+
+  <path d="M 1030 115 Q 700 80 240 215" stroke="#6b7280" stroke-width="2" fill="none"/>
+  <polygon points="240,215 246,222 250,212" fill="#6b7280"/>
+  <text x="600" y="100" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">ResetGame()</text>
+  <text x="600" y="115" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">按R键</text>
+
+  <path d="M 1030 415 Q 700 400 240 285" stroke="#6b7280" stroke-width="2" fill="none"/>
+  <polygon points="240,285 247,278 250,288" fill="#6b7280"/>
+  <text x="600" y="390" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">ResetGame()</text>
+  <text x="600" y="405" font-family="Microsoft YaHei, SimHei" font-size="10" text-anchor="middle" fill="#6b7280">按R键</text>
+
+  <g transform="translate(50, 500)">
+    <rect x="0" y="0" width="200" height="120" rx="8" ry="8" fill="#f3f4f6" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="100" y="20" font-family="Microsoft YaHei, SimHei" font-size="12" font-weight="bold" text-anchor="middle" fill="#1f2937">状态说明</text>
+    
+    <circle cx="30" cy="45" r="6" fill="#6366f1"/>
+    <text x="45" y="50" font-family="Microsoft YaHei, SimHei" font-size="10" fill="#4b5563">MainMenu - 主菜单</text>
+    
+    <circle cx="30" cy="65" r="6" fill="#22c55e"/>
+    <text x="45" y="70" font-family="Microsoft YaHei, SimHei" font-size="10" fill="#4b5563">Playing - 游戏中</text>
+    
+    <circle cx="30" cy="85" r="6" fill="#f59e0b"/>
+    <text x="45" y="90" font-family="Microsoft YaHei, SimHei" font-size="10" fill="#4b5563">ReadyToLaunch - 准备发射</text>
+    
+    <circle cx="30" cy="105" r="6" fill="#8b5cf6"/>
+    <text x="45" y="110" font-family="Microsoft YaHei, SimHei" font-size="10" fill="#4b5563">Launching - 发射中</text>
+  </g>
+
+  <g transform="translate(260, 500)">
+    <rect x="0" y="0" width="200" height="120" rx="8" ry="8" fill="#f3f4f6" stroke="#e5e7eb" stroke-width="1"/>
+    <text x="100" y="20" font-family="Microsoft YaHei, SimHei" font-size="12" font-weight="bold" text-anchor="middle" fill="#1f2937">续表</text>
+    
+    <circle cx="30" cy="45" r="6" fill="#10b981"/>
+    <text x="45" y="50" font-family="Microsoft YaHei, SimHei" font-size="10" fill="#4b5563">Victory - 胜利</text>
+    
+    <circle cx="30" cy="65" r="6" fill="#ef4444"/>
+    <text x="45" y="70" font-family="Microsoft YaHei, SimHei" font-size="10" fill="#4b5563">GameOver - 失败</text>
+    
+    <line x1="25" y1="90" x2="55" y2="90" stroke="#6b7280" stroke-width="2"/>
+    <polygon points="55,90 47,85 47,95" fill="#6b7280"/>
+    <text x="65" y="95" font-family="Microsoft YaHei, SimHei" font-size="10" fill="#4b5563">状态转换方向</text>
+  </g>
+</svg>

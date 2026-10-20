@@ -26,13 +26,25 @@ namespace EEGAI.Demo
         [SerializeField] private Material normalSkybox;
 
         private Light directionalLight;
+        private EnvironmentController environmentController;
         private AudioSource audioSource;
         private AudioSource crossfadeSource;
         private Coroutine musicCrossfadeCoroutine;
+        private Coroutine lightingCoroutine;
 
         private void Awake()
         {
-            directionalLight = FindObjectOfType<Light>();
+            directionalLight = RenderSettings.sun;
+            if (directionalLight == null || directionalLight.type != LightType.Directional)
+            {
+                directionalLight = null;
+                foreach (Light candidate in FindObjectsOfType<Light>())
+                {
+                    if (candidate.type == LightType.Directional && candidate.isActiveAndEnabled &&
+                        (directionalLight == null || candidate.intensity > directionalLight.intensity))
+                        directionalLight = candidate;
+                }
+            }
             audioSource = GetComponent<AudioSource>();
             if (audioSource == null)
             {
@@ -50,6 +62,7 @@ namespace EEGAI.Demo
 
         private void Start()
         {
+            environmentController = FindObjectOfType<EnvironmentController>();
             if (emotionSimulator == null)
             {
                 emotionSimulator = FindAnyObjectByType<DemoEmotionSimulator>();
@@ -87,9 +100,17 @@ namespace EEGAI.Demo
         {
             string emotionStr = emotion.ToString().ToLower();
 
+            // The same owner handles live EEG and demo emotions, including paused menu transitions.
+            if (environmentController != null && environmentController.isActiveAndEnabled)
+            {
+                environmentController.SetEmotion(emotionStr, immediate);
+                return;
+            }
+
             if (forwardToEmotionEffectManager && emotionEffectManager != null)
             {
                 emotionEffectManager.ForceTransitionToEmotion(emotionStr);
+                return;
             }
 
             ApplyLighting(emotion, immediate);
@@ -110,22 +131,30 @@ namespace EEGAI.Demo
             if (directionalLight == null) return;
 
             Color targetColor = normalLightColor;
-            float targetIntensity = 1f;
+            float targetIntensity = 1.5f;
 
             switch (emotion)
             {
                 case DemoEmotionSimulator.EmotionType.Happy:
                     targetColor = happyLightColor;
-                    targetIntensity = 1.3f;
+                    targetIntensity = 1.65f;
                     break;
                 case DemoEmotionSimulator.EmotionType.Sad:
                     targetColor = sadLightColor;
-                    targetIntensity = 0.5f;
+                    targetIntensity = 1.275f;
                     break;
                 case DemoEmotionSimulator.EmotionType.Normal:
                     targetColor = normalLightColor;
-                    targetIntensity = 1f;
+                    targetIntensity = 1.5f;
                     break;
+            }
+
+            // Legacy inspector colors are strongly saturated; keep a subtle mood tint for this fallback.
+            targetColor = Color.Lerp(Color.white, targetColor, 0.2f);
+            if (lightingCoroutine != null)
+            {
+                StopCoroutine(lightingCoroutine);
+                lightingCoroutine = null;
             }
 
             if (immediate)
@@ -135,7 +164,7 @@ namespace EEGAI.Demo
             }
             else
             {
-                StartCoroutine(LerpLighting(directionalLight.color, directionalLight.intensity, targetColor, targetIntensity, 1f));
+                lightingCoroutine = StartCoroutine(LerpLighting(directionalLight.color, directionalLight.intensity, targetColor, targetIntensity, 1.5f));
             }
         }
 
@@ -181,8 +210,8 @@ namespace EEGAI.Demo
             float elapsed = 0f;
             while (elapsed < duration)
             {
-                elapsed += Time.deltaTime;
-                float t = elapsed / duration;
+                elapsed += Time.unscaledDeltaTime;
+                float t = Mathf.Clamp01(elapsed / duration);
                 t = t * t * (3f - 2f * t);
 
                 directionalLight.color = Color.Lerp(startColor, targetColor, t);
@@ -193,6 +222,7 @@ namespace EEGAI.Demo
 
             directionalLight.color = targetColor;
             directionalLight.intensity = targetIntensity;
+            lightingCoroutine = null;
         }
 
         private System.Collections.IEnumerator CrossfadeToMusic(AudioClip newClip, float duration)

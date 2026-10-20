@@ -9,7 +9,6 @@ namespace EEGAI.Demo
         [SerializeField] private string nodeName = "Repair Node";
         [SerializeField] private string nodeDescription = "A damaged ship component";
         [SerializeField] private float repairDistance = 3f;
-        [SerializeField] private KeyCode repairKey = KeyCode.E;
 
         [Header("Visual Effects")]
         [SerializeField] private float floatAmplitude = 0.3f;

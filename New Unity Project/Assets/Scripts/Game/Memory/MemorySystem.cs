@@ -11,9 +11,6 @@ namespace EEGAI.Game.Memory
         [SerializeField] private float baseProgressIncrement = 5f;
         [SerializeField] private float emotionBonusMultiplier = 1.5f;
 
-        [Header("Game Events")]
-        [SerializeField] private string completionEventName = "MemoryRecoveryComplete";
-
         private MemoryProgress progress;
         private Dictionary<string, MemoryFragment> fragmentLookup = new Dictionary<string, MemoryFragment>();
 

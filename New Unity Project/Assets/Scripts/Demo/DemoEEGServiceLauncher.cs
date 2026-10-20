@@ -13,11 +13,37 @@ namespace EEGAI.Demo
         private const string RealtimeRelativeDir = "eeg_modular/realtime_inference";
         private const string PythonArgs = "main.py -c config/thinkgear_tcp.yaml";
         private const string PreferredPythonPath = "E:/anaconda3/envs/eegcnn/python.exe";
+        private static readonly bool UseDirectSerial = true;
+        private const string DirectSerialPort = "COM8";
 
         private static Process connectorProcess;
+        private static bool ownsConnectorProcess;
         private static Process pythonProcess;
 
         public static string LastStatus { get; private set; } = "EEG services not started";
+        public const string ExpectedServerVersion = "2.0";
+
+        public static string ExpectedSourcePrefix => UseDirectSerial ? "serial/" : "tcp/";
+        public static string ExpectedConfigLabel => UseDirectSerial ? $"serial:{DirectSerialPort}" : "tcp";
+
+        public static bool IsExpectedConfig(string mode, string port)
+        {
+            if (UseDirectSerial)
+            {
+                bool modeMatches = string.Equals(mode, "serial", StringComparison.OrdinalIgnoreCase);
+                bool portMatches = string.IsNullOrEmpty(port) ||
+                    string.Equals(port, DirectSerialPort, StringComparison.OrdinalIgnoreCase);
+                return modeMatches && portMatches;
+            }
+
+            return string.Equals(mode, "tcp", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public static bool IsExpectedSource(string source)
+        {
+            return !string.IsNullOrEmpty(source) &&
+                source.StartsWith(ExpectedSourcePrefix, StringComparison.OrdinalIgnoreCase);
+        }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
@@ -34,7 +60,14 @@ namespace EEGAI.Demo
 
         public static void StartServices()
         {
-            StartThinkGearConnector();
+            if (UseDirectSerial)
+            {
+                LastStatus = $"Using direct ThinkGear serial input on {DirectSerialPort}; Connector is not required.";
+            }
+            else
+            {
+                StartThinkGearConnector();
+            }
             StartRealtimePython();
         }
 
@@ -47,28 +80,24 @@ namespace EEGAI.Demo
 
         public static bool TestThinkGearConnection()
         {
-            try
+            if (UseDirectSerial)
             {
-                using (var client = new TcpClient())
-                {
-                    var result = client.BeginConnect("127.0.0.1", 13854, null, null);
-                    bool connected = result.AsyncWaitHandle.WaitOne(TimeSpan.FromMilliseconds(700));
-                    if (!connected)
-                    {
-                        LastStatus = "ThinkGear Connector TCP 13854 is not reachable";
-                        return false;
-                    }
+                var emotionPanel = FindAnyObjectByType<EmotionPanel>();
+                bool liveSerial = emotionPanel != null && emotionPanel.WebSocketConnected &&
+                    emotionPanel.currentStreamConnected &&
+                    !string.IsNullOrEmpty(emotionPanel.currentSource) &&
+                    emotionPanel.currentSource.StartsWith("serial/", StringComparison.OrdinalIgnoreCase);
+                LastStatus = liveSerial
+                    ? $"ThinkGear is streaming directly from {DirectSerialPort}"
+                    : $"No live ThinkGear stream from {DirectSerialPort}. Check headset power/Bluetooth, then restart EEG services.";
+                return liveSerial;
+            }
 
-                    client.EndConnect(result);
-                    LastStatus = "ThinkGear Connector TCP 13854 is reachable";
-                    return true;
-                }
-            }
-            catch (Exception ex)
-            {
-                LastStatus = $"Device test failed: {ex.Message}";
-                return false;
-            }
+            bool connected = IsTcpPortOpen("127.0.0.1", 13854, 500);
+            LastStatus = connected
+                ? "ThinkGear Connector TCP 13854 is reachable"
+                : "ThinkGear Connector TCP 13854 is not listening. Open the Connector, connect the headset, and enable its TCP server.";
+            return connected;
         }
 
         public static bool TestRealtimeDataFlow()
@@ -80,12 +109,12 @@ namespace EEGAI.Demo
                 return false;
             }
 
-            bool websocketOpen = IsPortListening(8765);
             bool fresh = emotionPanel.currentDataAgeSeconds >= 0f && emotionPanel.currentDataAgeSeconds <= 3f;
             bool realSource = !string.Equals(emotionPanel.currentSource, "mock", StringComparison.OrdinalIgnoreCase) &&
                 !string.Equals(emotionPanel.currentSource, "training", StringComparison.OrdinalIgnoreCase) &&
                 !string.Equals(emotionPanel.currentSource, "unknown", StringComparison.OrdinalIgnoreCase);
-            bool live = emotionPanel.currentDeviceConnected && emotionPanel.currentStreamConnected && fresh && realSource;
+            bool live = emotionPanel.WebSocketConnected && emotionPanel.MessageAgeSeconds <= 3f &&
+                emotionPanel.currentDeviceConnected && emotionPanel.currentStreamConnected && fresh && realSource;
 
             if (live)
             {
@@ -93,7 +122,48 @@ namespace EEGAI.Demo
                 return true;
             }
 
-            LastStatus = $"No real fresh EEG data. ws8765={(websocketOpen ? "open" : "closed")}, source={emotionPanel.currentSource}, device={emotionPanel.currentDeviceConnected}, stream={emotionPanel.currentStreamConnected}, age={emotionPanel.currentDataAgeSeconds:F1}s, eSenseAge={emotionPanel.currentESenseAgeSeconds:F1}s, poorSignal={emotionPanel.currentPoorSignal}, packets={emotionPanel.currentRawPacketCount}/{emotionPanel.currentESensePacketCount}/{emotionPanel.currentPowerPacketCount}";
+            if (!emotionPanel.isActiveAndEnabled)
+            {
+                LastStatus = "EEG receiver is disabled. Enable EmotionPanel in the scene.";
+                return false;
+            }
+
+            if (!emotionPanel.WebSocketConnected)
+            {
+                LastStatus = $"Unity EEG connection: {emotionPanel.ConnectionStatus}. Address: {emotionPanel.serverUrl}";
+                return false;
+            }
+
+            if (emotionPanel.MessageAgeSeconds > 3f)
+            {
+                if (UseDirectSerial)
+                {
+                    LastStatus = $"Realtime service stopped sending messages. Restart EEG services; direct input is configured for {DirectSerialPort}.";
+                }
+                else if (!IsTcpPortOpen("127.0.0.1", 13854, 300))
+                {
+                    LastStatus = "Unity is connected to the inference service, but ThinkGear Connector TCP 13854 is not listening. Connect the headset in ThinkGear Connector and enable its TCP server.";
+                }
+                else
+                {
+                    LastStatus = $"ThinkGear TCP is open, but the inference service has sent no recent messages. Unity received: {emotionPanel.ReceivedMessageCount}";
+                }
+                return false;
+            }
+
+            if (!emotionPanel.currentStreamConnected && UseDirectSerial)
+            {
+                LastStatus = $"Realtime service is reachable, but no ThinkGear packets are arriving from {DirectSerialPort}. Check headset power/Bluetooth and restart EEG services.";
+                return false;
+            }
+
+            if (!emotionPanel.currentStreamConnected && !IsTcpPortOpen("127.0.0.1", 13854, 300))
+            {
+                LastStatus = "Inference service is reachable, but ThinkGear Connector TCP 13854 is not listening. Connect the headset and enable the Connector TCP server.";
+                return false;
+            }
+
+            LastStatus = $"Receiving data: source={emotionPanel.currentSource}, device={emotionPanel.currentDeviceConnected}, stream={emotionPanel.currentStreamConnected}, age={emotionPanel.currentDataAgeSeconds:F1}s, eSenseAge={emotionPanel.currentESenseAgeSeconds:F1}s, poorSignal={emotionPanel.currentPoorSignal}, packets={emotionPanel.currentRawPacketCount}/{emotionPanel.currentESensePacketCount}/{emotionPanel.currentPowerPacketCount}";
             return false;
         }
 
@@ -105,8 +175,15 @@ namespace EEGAI.Demo
 
         private static void StartThinkGearConnector()
         {
+            if (IsTcpPortOpen("127.0.0.1", 13854, 250))
+            {
+                LastStatus = "ThinkGear Connector TCP server is already listening";
+                return;
+            }
+
             if (connectorProcess != null && !connectorProcess.HasExited)
             {
+                LastStatus = "ThinkGear Connector was launched; waiting for TCP 13854. If Windows shows its publisher warning, only run it when you trust this Connector's source.";
                 return;
             }
 
@@ -114,7 +191,8 @@ namespace EEGAI.Demo
             if (existingConnectors.Length > 0)
             {
                 connectorProcess = existingConnectors[0];
-                LastStatus = "ThinkGear Connector is already running";
+                ownsConnectorProcess = false;
+                LastStatus = $"ThinkGear Connector process is running ({existingConnectors.Length}), but TCP 13854 is not listening. In the Connector, connect the headset and enable the TCP server. No duplicate was launched.";
                 return;
             }
 
@@ -133,8 +211,11 @@ namespace EEGAI.Demo
                 UseShellExecute = true
             });
 
-            LastStatus = "ThinkGear Connector started";
-            UnityEngine.Debug.Log("[EEG] ThinkGear Connector started");
+            ownsConnectorProcess = connectorProcess != null;
+            LastStatus = connectorProcess != null
+                ? "ThinkGear Connector launched. Waiting for TCP 13854; complete any Windows security prompt only if you trust this Connector's source."
+                : "Windows did not start ThinkGear Connector.";
+            UnityEngine.Debug.Log($"[EEG] {LastStatus}");
         }
 
         private static void StartRealtimePython()
@@ -146,13 +227,12 @@ namespace EEGAI.Demo
 
             if (IsPortListening(8765))
             {
-                if (TestRealtimeDataFlow())
-                {
-                    LastStatus = "Realtime EEG data is already live";
-                    return;
-                }
-
-                StopPythonListeningOnPort(8765);
+                // A receiver that has not connected yet is not evidence of a stale server.
+                if (string.IsNullOrEmpty(LastStatus) || LastStatus == "EEG services not started")
+                    LastStatus = "Realtime inference service is already running on port 8765.";
+                else
+                    LastStatus += " Realtime inference is already running on port 8765.";
+                return;
             }
 
             string realtimeDir = FindExistingPath(RealtimeRelativeDir);
@@ -172,7 +252,10 @@ namespace EEGAI.Demo
                 CreateNoWindow = true
             });
 
-            LastStatus = "ThinkGear Connector and realtime Python started";
+            if (string.IsNullOrEmpty(LastStatus) || LastStatus == "EEG services not started")
+                LastStatus = "Realtime Python started";
+            else
+                LastStatus += " Realtime Python is running on port 8765.";
             UnityEngine.Debug.Log("[EEG] Realtime Python started");
         }
 
@@ -189,16 +272,13 @@ namespace EEGAI.Demo
 
         private static void StopThinkGearConnector()
         {
-            if (connectorProcess != null && !connectorProcess.HasExited)
+            // Do not terminate an instance that the user launched independently.
+            if (ownsConnectorProcess && connectorProcess != null && !connectorProcess.HasExited)
             {
                 TryCloseOrKill(connectorProcess);
-                connectorProcess = null;
             }
-
-            foreach (var process in Process.GetProcessesByName("ThinkGear Connector"))
-            {
-                TryCloseOrKill(process);
-            }
+            connectorProcess = null;
+            ownsConnectorProcess = false;
         }
 
         private static void TryCloseOrKill(Process process)
@@ -243,7 +323,15 @@ namespace EEGAI.Demo
                 }
                 catch (Exception ex)
                 {
-                    UnityEngine.Debug.LogWarning($"[EEG] Failed to stop process {pid}: {ex.Message}");
+                    // 进程可能已自行退出，这种情况无需警告
+                    if (ex.Message.Contains("exited") || ex.Message.Contains("not available"))
+                    {
+                        UnityEngine.Debug.Log($"[EEG] Process {pid} already exited, skipping.");
+                    }
+                    else
+                    {
+                        UnityEngine.Debug.LogWarning($"[EEG] Failed to stop process {pid}: {ex.Message}");
+                    }
                 }
             }
         }

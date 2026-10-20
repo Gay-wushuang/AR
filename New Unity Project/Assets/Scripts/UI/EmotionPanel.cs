@@ -1,6 +1,5 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
-using System.Collections;
 using System.Collections.Generic;
 using WebSocketSharp;
 using EEGAI.Demo;
@@ -8,7 +7,7 @@ using EEGAI.Demo;
 public class EmotionPanel : MonoBehaviour
 {
     [Header("WebSocket Settings")]
-    public string serverUrl = "ws://localhost:8765";
+    public string serverUrl = "ws://127.0.0.1:8765";
     public float reconnectDelay = 3f;
     
     [Header("引用")]
@@ -32,25 +31,38 @@ public class EmotionPanel : MonoBehaviour
     public int currentRawPacketCount = 0;
     public int currentESensePacketCount = 0;
     public int currentPowerPacketCount = 0;
+
+    // Runtime-only state. Kept static so adding it does not change the
+    // serialization layout of this scene component.
+    public static int[] CurrentRawSamples { get; private set; } = System.Array.Empty<int>();
+    public static string CurrentConfigMode { get; private set; } = "unknown";
+    public static string CurrentConfigPort { get; private set; } = "";
+    public static string CurrentServerVersion { get; private set; } = "unknown";
+    public static bool CurrentInputComplete { get; private set; }
     
     private WebSocket ws;
-    private Coroutine reconnectCoroutine;
+    private float nextReconnectTime;
+    private float lastMessageTime = -1f;
+    private static bool configRestartRequested;
+    public bool WebSocketConnected => ws != null && ws.ReadyState == WebSocketState.Open;
+    public int ReceivedMessageCount { get; private set; }
+    public float MessageAgeSeconds => lastMessageTime < 0f ? 999999f : Time.realtimeSinceStartup - lastMessageTime;
+    public string ConnectionStatus { get; private set; } = "Not connected";
     private string targetEmotion = "normal";
     private DemoAttentionSystem demoAttentionSystem;
     private DemoMeditationSystem demoMeditationSystem;
     private DemoEmotionSimulator demoEmotionSimulator;
     private bool allowReconnect = true;
     private bool isShuttingDown = false;
-    private bool wasCursorLocked = true;  // 记录光标状态
-    
-    // 线程安全的消息队列
-    private Queue<string> messageQueue = new Queue<string>();
-    private object queueLock = new object();
+    // WebSocket callbacks run on worker threads. Only Update may touch Unity objects.
+    private readonly Queue<System.Action> mainThreadActions = new Queue<System.Action>();
+    private readonly object queueLock = new object();
 
     private void OnEnable()
     {
         isShuttingDown = false;
         allowReconnect = true;
+        nextReconnectTime = 0f;
 
         if (Application.isPlaying && ws == null)
         {
@@ -120,6 +132,7 @@ public class EmotionPanel : MonoBehaviour
         }
         
         ProcessMessageQueue();
+        UpdateConnection();
     }
 
     private void Connect()
@@ -129,53 +142,64 @@ public class EmotionPanel : MonoBehaviour
             return;
         }
 
-        if (ws != null && (ws.IsAlive || ws.ReadyState == WebSocketState.Connecting))
+        if (ws != null && (ws.ReadyState == WebSocketState.Open || ws.ReadyState == WebSocketState.Connecting))
         {
             return;
         }
 
-        Debug.Log($"[EEG] Connecting to {serverUrl}...");
-        ws = new WebSocket(serverUrl);
-        
-        ws.OnOpen += OnOpen;
-        ws.OnMessage += OnMessage;
-        ws.OnError += OnError;
-        ws.OnClose += OnClose;
-        
-        ws.ConnectAsync();
+        ReleaseSocket();
+        nextReconnectTime = Time.realtimeSinceStartup + Mathf.Max(0.25f, reconnectDelay);
+        ConnectionStatus = $"Connecting to {serverUrl}";
+        Debug.Log($"[EEG] {ConnectionStatus}...");
+        try
+        {
+            ws = new WebSocket(serverUrl);
+            ws.OnOpen += OnOpen;
+            ws.OnMessage += OnMessage;
+            ws.OnError += OnError;
+            ws.OnClose += OnClose;
+            ws.ConnectAsync();
+        }
+        catch (System.Exception ex)
+        {
+            ConnectionStatus = $"Connection failed: {ex.Message}";
+            Debug.LogWarning($"[EEG] {ConnectionStatus}");
+            ReleaseSocket();
+        }
     }
 
     private void OnOpen(object sender, System.EventArgs e)
     {
-        Debug.Log("[EEG] ✅ Connected to emotion server!");
-        if (reconnectCoroutine != null)
+        EnqueueSocketAction(sender, () =>
         {
-            StopCoroutine(reconnectCoroutine);
-            reconnectCoroutine = null;
-        }
+            ConnectionStatus = "Connected; waiting for EEG data";
+            Debug.Log("[EEG] Connected to emotion server.");
+        });
     }
 
     private void OnMessage(object sender, MessageEventArgs e)
     {
-        lock (queueLock)
-        {
-            messageQueue.Enqueue(e.Data);
-        }
+        if (e.IsText)
+            EnqueueSocketAction(sender, () => ProcessEmotionData(e.Data));
     }
 
     private void ProcessEmotionData(string jsonData)
     {
         try
         {
-            Debug.Log($"[EEG] 收到数据: {jsonData}");
-            
             var emotionData = JsonUtility.FromJson<EmotionData>(jsonData);
             
-            if (emotionData == null)
+            if (emotionData == null || string.IsNullOrEmpty(emotionData.emotion))
             {
                 Debug.LogWarning("[EEG] Received null emotion data");
                 return;
             }
+
+            lastMessageTime = Time.realtimeSinceStartup;
+            ReceivedMessageCount++;
+            ConnectionStatus = "Receiving EEG data";
+            if (ReceivedMessageCount == 1)
+                Debug.Log($"[EEG] First data received: source={emotionData.source}, emotion={emotionData.emotion}, att={emotionData.attention}, med={emotionData.meditation}");
             
             currentConfidence = emotionData.confidence;
             transitionProgress = emotionData.transition_progress;
@@ -192,15 +216,23 @@ public class EmotionPanel : MonoBehaviour
             currentRawPacketCount = emotionData.raw_packet_count;
             currentESensePacketCount = emotionData.esense_packet_count;
             currentPowerPacketCount = emotionData.power_packet_count;
-            
-            Debug.Log($"[EEG] 解析结果: emotion={emotionData.emotion}, confidence={emotionData.confidence:F2}");
-            
+            CurrentRawSamples = emotionData.raw_samples ?? System.Array.Empty<int>();
+            CurrentConfigMode = string.IsNullOrEmpty(emotionData.config_mode) ? "unknown" : emotionData.config_mode;
+            CurrentConfigPort = string.IsNullOrEmpty(emotionData.config_port) ? string.Empty : emotionData.config_port;
+            CurrentInputComplete = emotionData.input_complete;
+            CurrentServerVersion = string.IsNullOrEmpty(emotionData.server_version) ? "unknown" : emotionData.server_version;
+
+            // Validate even while offline: a stale Python process with the wrong
+            // config (for example tcp instead of serial COM8) must be replaced.
+            ValidateEegConfiguration();
+
             if (!currentDeviceConnected)
             {
                 currentEmotion = "offline";
                 targetEmotion = "offline";
                 return;
             }
+
 
             if (demoAttentionSystem != null)
             {
@@ -241,6 +273,32 @@ public class EmotionPanel : MonoBehaviour
 
 
     
+    private void ValidateEegConfiguration()
+    {
+        bool configOk = DemoEEGServiceLauncher.IsExpectedConfig(CurrentConfigMode, CurrentConfigPort);
+        bool sourceOk = DemoEEGServiceLauncher.IsExpectedSource(currentSource);
+        bool versionOk = string.Equals(CurrentServerVersion, DemoEEGServiceLauncher.ExpectedServerVersion,
+            System.StringComparison.OrdinalIgnoreCase);
+        if (configOk && sourceOk && versionOk)
+        {
+            configRestartRequested = false;
+            return;
+        }
+
+        if (configRestartRequested)
+        {
+            return;
+        }
+
+        configRestartRequested = true;
+        Debug.LogWarning(
+            $"[EEG] Source/config/version mismatch: got {CurrentConfigMode}:{CurrentConfigPort} / " +
+            $"{currentSource} / v{CurrentServerVersion}, expected {DemoEEGServiceLauncher.ExpectedConfigLabel} / " +
+            $"{DemoEEGServiceLauncher.ExpectedSourcePrefix}* / v{DemoEEGServiceLauncher.ExpectedServerVersion}. " +
+            "Restarting EEG services once.");
+        DemoEEGServiceLauncher.RestartServices();
+    }
+
     private void TestEmotion(string emotion)
     {
         currentEmotion = emotion;
@@ -287,60 +345,78 @@ public class EmotionPanel : MonoBehaviour
 
     private void ProcessMessageQueue()
     {
-        List<string> messagesToProcess = new List<string>();
-        
+        // Bound work per frame so a backlog cannot stall the game.
+        for (int i = 0; i < 256; i++)
+        {
+            System.Action action;
+            lock (queueLock)
+            {
+                if (mainThreadActions.Count == 0) break;
+                action = mainThreadActions.Dequeue();
+            }
+            action();
+        }
+    }
+
+    private void EnqueueSocketAction(object sender, System.Action action)
+    {
         lock (queueLock)
         {
-            while (messageQueue.Count > 0)
+            mainThreadActions.Enqueue(() =>
             {
-                messagesToProcess.Add(messageQueue.Dequeue());
-            }
-        }
-        
-        foreach (string message in messagesToProcess)
-        {
-            ProcessEmotionData(message);
+                // A late callback from a disposed socket must not affect its replacement.
+                if (!isShuttingDown && ReferenceEquals(sender, ws))
+                    action();
+            });
         }
     }
 
     private void OnError(object sender, ErrorEventArgs e)
     {
-        Debug.LogError($"[EEG] ❌ WebSocket error: {e.Message}");
+        EnqueueSocketAction(sender, () =>
+        {
+            ConnectionStatus = $"Connection error: {e.Message}";
+            Debug.LogWarning($"[EEG] {ConnectionStatus}");
+        });
     }
 
     private void OnClose(object sender, CloseEventArgs e)
     {
-        Debug.Log($"[EEG] Disconnected from server. Code: {e.Code}, Reason: {e.Reason}");
-
-        if (!allowReconnect || isShuttingDown || !isActiveAndEnabled || !gameObject.activeInHierarchy)
+        EnqueueSocketAction(sender, () =>
         {
-            return;
-        }
-        
-        if (reconnectCoroutine == null)
-        {
-            reconnectCoroutine = StartCoroutine(Reconnect());
-        }
+            ConnectionStatus = $"Disconnected ({e.Code}); retrying";
+            MarkDataOffline();
+            nextReconnectTime = Time.realtimeSinceStartup + Mathf.Max(0.25f, reconnectDelay);
+            Debug.Log($"[EEG] {ConnectionStatus}: {e.Reason}");
+        });
     }
 
-    private IEnumerator Reconnect()
+    private void UpdateConnection()
     {
-        int retryCount = 0;
-        while (ws == null || !ws.IsAlive)
+        if (lastMessageTime >= 0f)
         {
-            if (!allowReconnect || isShuttingDown || !isActiveAndEnabled || !gameObject.activeInHierarchy)
-            {
-                reconnectCoroutine = null;
-                yield break;
-            }
-
-            retryCount++;
-            Debug.Log($"[EEG] Attempting to reconnect... ({retryCount})");
-            yield return new WaitForSeconds(reconnectDelay);
-            Connect();
+            currentDataAgeSeconds = Mathf.Min(999999f, currentDataAgeSeconds + Time.unscaledDeltaTime);
+            currentESenseAgeSeconds = Mathf.Min(999999f, currentESenseAgeSeconds + Time.unscaledDeltaTime);
+            currentPowerAgeSeconds = Mathf.Min(999999f, currentPowerAgeSeconds + Time.unscaledDeltaTime);
         }
 
-        reconnectCoroutine = null;
+        if (!WebSocketConnected || MessageAgeSeconds > 3f || currentDataAgeSeconds > 3f)
+            MarkDataOffline();
+
+        // Real time continues while the menu pauses gameplay (timeScale == 0).
+        if (allowReconnect && !isShuttingDown && Time.realtimeSinceStartup >= nextReconnectTime &&
+            (ws == null || ws.ReadyState == WebSocketState.Closed))
+            Connect();
+    }
+
+    private void MarkDataOffline()
+    {
+        currentDeviceConnected = false;
+        currentStreamConnected = false;
+        currentEmotion = "offline";
+        targetEmotion = "offline";
+        CurrentRawSamples = System.Array.Empty<int>();
+        CurrentInputComplete = false;
     }
 
     private void OnDisable()
@@ -358,19 +434,22 @@ public class EmotionPanel : MonoBehaviour
         isShuttingDown = true;
         allowReconnect = false;
 
-        if (reconnectCoroutine != null)
-        {
-            StopCoroutine(reconnectCoroutine);
-            reconnectCoroutine = null;
-        }
+        ReleaseSocket();
+        lock (queueLock) mainThreadActions.Clear();
+        MarkDataOffline();
+        lastMessageTime = -1f;
+        ConnectionStatus = "Disconnected";
+    }
 
+    private void ReleaseSocket()
+    {
         if (ws != null)
         {
             ws.OnOpen -= OnOpen;
             ws.OnMessage -= OnMessage;
             ws.OnError -= OnError;
             ws.OnClose -= OnClose;
-            ws.Close();
+            ws.CloseAsync();
             ws = null;
         }
     }
@@ -397,7 +476,7 @@ public class EmotionPanel : MonoBehaviour
         GUILayout.Label("🧠 EEG Emotion Receiver", GUI.skin.box);
         GUILayout.Space(10);
         
-        bool isConnected = ws != null && ws.IsAlive;
+        bool isConnected = WebSocketConnected;
         GUILayout.Label($"🔗 Connection: {(isConnected ? "✅ Connected" : "❌ Disconnected")}");
         GUILayout.Label($"😊 Current Emotion: {currentEmotion.ToUpper()}");
         GUILayout.Label($"📊 Confidence: {currentConfidence:P1}");
@@ -461,6 +540,11 @@ public class EmotionPanel : MonoBehaviour
         public int raw_packet_count;
         public int esense_packet_count;
         public int power_packet_count;
+        public int[] raw_samples;
+        public string config_mode;
+        public string config_port;
+        public bool input_complete;
+        public string server_version;
     }
 
     [System.Serializable]

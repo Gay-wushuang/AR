@@ -11,10 +11,6 @@ namespace EEGAI.AI.Emotion
         [SerializeField] private float highAnxietyBetaThreshold = 0.4f;
         [SerializeField] private float calmAlphaThreshold = 0.35f;
 
-        [Header("Time Windows")]
-        [SerializeField] private float analysisIntervalSeconds = 30f;
-        [SerializeField] private float interventionThresholdMinutes = 5f;
-
         [Header("Memory Integration")]
         [SerializeField] private Game.Memory.MemorySystem memorySystem;
 

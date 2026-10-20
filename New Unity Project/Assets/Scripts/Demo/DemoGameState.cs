@@ -18,6 +18,10 @@ namespace EEGAI.Demo
 
         [Header("Game Settings")]
         [SerializeField] private int totalRepairNodes = 3;
+        [Tooltip("Failsafe: force victory if the launch coroutine is interrupted and the game stays in Launching.")]
+        [SerializeField] private float launchTimeout = 15f;
+
+        private float launchStartedAt;
 
         public GameStatus Status { get; private set; } = GameStatus.MainMenu;
         public int RepairedNodes { get; private set; } = 0;
@@ -91,6 +95,20 @@ namespace EEGAI.Demo
                 }
             }
 
+            if (Status == GameStatus.Launching)
+            {
+                // The launch coroutine normally completes after ~5 seconds. If a runtime
+                // exception or a stopped coroutine leaves the game in Launching, force
+                // the victory state so the mission can never soft-lock here.
+                if (launchTimeout > 0f && Time.unscaledTime - launchStartedAt >= launchTimeout)
+                {
+                    Debug.LogWarning("[Demo] Launch sequence timed out; forcing victory state.");
+                    CompleteLaunch();
+                }
+
+                return;
+            }
+
             if (Status != GameStatus.Playing && Status != GameStatus.ReadyToLaunch)
             {
                 return;
@@ -159,6 +177,7 @@ namespace EEGAI.Demo
         {
             if (Status != GameStatus.ReadyToLaunch) return;
             Status = GameStatus.Launching;
+            launchStartedAt = Time.unscaledTime;
             Debug.Log("[Demo] Rocket launch sequence started.");
         }
 

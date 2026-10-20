@@ -47,9 +47,6 @@ namespace EEGAI.AI.Dialogue
         [SerializeField] private EmotionAnalyzer emotionAnalyzer;
         [SerializeField] private MemorySystem memorySystem;
 
-        [Header("Configuration")]
-        [SerializeField] private float typingDelay = 0.05f;
-
         private ConversationContext context = new ConversationContext();
         private bool isProcessing = false;
 

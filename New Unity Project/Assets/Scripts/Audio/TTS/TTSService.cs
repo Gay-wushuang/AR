@@ -127,7 +127,15 @@ namespace EEGAI.Audio.TTS
                     AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
                     if (clip != null)
                     {
-                        PlayClip(clip);
+                        if (autoPlay)
+                        {
+                            PlayClip(clip);
+                        }
+                        else
+                        {
+                            isSpeaking = false;
+                            OnSpeechComplete?.Invoke();
+                        }
                     }
                     else
                     {

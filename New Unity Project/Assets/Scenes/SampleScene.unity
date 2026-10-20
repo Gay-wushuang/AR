@@ -3411,10 +3411,18 @@ MonoBehaviour:
   happyMusic: {fileID: 8300000, guid: f4a43638e8c0430439be78288ee76acd, type: 3}
   sadMusic: {fileID: 8300000, guid: 4103a2b87e14e294b882fb205c0bf5e9, type: 3}
   normalMusic: {fileID: 8300000, guid: 13f51e3794b826f4197674d9119e92d4, type: 3}
-  musicTransitionTime: 2
+  musicTransitionTime: 3
+  musicEmotionHoldSeconds: 6
+  minimumMusicTrackSeconds: 90
   ambientColors: []
+  directionalLight: {fileID: 1552962665}
+  normalLightIntensity: 0
+  normalLightColor: {r: 1, g: 0.98, b: 0.95, a: 1}
+  happyLightColor: {r: 1, g: 0.94, b: 0.82, a: 1}
+  sadLightColor: {r: 0.82, g: 0.9, b: 1, a: 1}
+  normalAmbientColor: {r: 0.035, g: 0.038, b: 0.045, a: 1}
+  switchSkyboxWithEmotion: 0
   skyboxTransitionDuration: 1.5
-  transitionSmoothTime: 1
   useEmotionControl: 1
 --- !u!114 &259594791
 MonoBehaviour:
@@ -3428,7 +3436,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bee19d72b32e4f4cb1e2bf5972ff16e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::EmotionPanel
-  serverUrl: ws://localhost:8765
+  serverUrl: ws://127.0.0.1:8765
   reconnectDelay: 3
   environmentController: {fileID: 259594790}
   showDebugInfo: 1
@@ -13448,7 +13456,7 @@ AudioListener:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1393765427}
-  m_Enabled: 1
+  m_Enabled: 0
 --- !u!1001 &1395626659
 PrefabInstance:
   m_ObjectHideFlags: 0

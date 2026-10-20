@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图4.1 游戏状态流转效果图</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', 'SimHei', sans-serif;
+            background-color: #ffffff;
+            margin: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        h1 {
+            color: #1f2937;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .mermaid-container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .legend {
+            margin-top: 20px;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            color: #4b5563;
+        }
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        .info-table {
+            margin-top: 30px;
+            width: 90%;
+            max-width: 800px;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .info-table th, .info-table td {
+            border: 1px solid #e5e7eb;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        .info-table th {
+            background-color: #f3f4f6;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>图4.1 游戏状态流转效果图</h1>
+    
+    <div class="mermaid-container">
+        <pre class="mermaid">
+            stateDiagram-v2
+                direction LR
+                
+                [*] --> MainMenu: 游戏启动
+                
+                MainMenu --> Playing: StartGame()\n重置游戏 + 启动EEG服务
+                
+                Playing --> ReadyToLaunch: 修复所有节点\n(RepairedNodes >= TotalRepairNodes)
+                Playing --> GameOver: 氧气耗尽\n(oxygenSystem.IsDepleted)
+                
+                ReadyToLaunch --> Launching: BeginLaunch()\n点击发射按钮
+                ReadyToLaunch --> GameOver: 氧气耗尽
+                
+                Launching --> Victory: CompleteLaunch()\n发射动画完成
+                
+                Victory --> MainMenu: ResetGame()\n按R键重新开始
+                GameOver --> MainMenu: ResetGame()\n按R键重新开始
+
+                state MainMenu {
+                    color #6366f1
+                }
+                state Playing {
+                    color #22c55e
+                }
+                state ReadyToLaunch {
+                    color #f59e0b
+                }
+                state Launching {
+                    color #8b5cf6
+                }
+                state Victory {
+                    color #10b981
+                }
+                state GameOver {
+                    color #ef4444
+                }
+        </pre>
+    </div>
+
+    <div class="legend">
+        <div class="legend-item"><div class="legend-color" style="background-color: #6366f1;"></div>MainMenu - 主菜单</div>
+        <div class="legend-item"><div class="legend-color" style="background-color: #22c55e;"></div>Playing - 游戏中</div>
+        <div class="legend-item"><div class="legend-color" style="background-color: #f59e0b;"></div>ReadyToLaunch - 准备发射</div>
+        <div class="legend-item"><div class="legend-color" style="background-color: #8b5cf6;"></div>Launching - 发射中</div>
+        <div class="legend-item"><div class="legend-color" style="background-color: #10b981;"></div>Victory - 胜利</div>
+        <div class="legend-item"><div class="legend-color" style="background-color: #ef4444;"></div>GameOver - 失败</div>
+    </div>
+
+    <table class="info-table">
+        <thead>
+            <tr>
+                <th>状态</th>
+                <th>枚举值</th>
+                <th>说明</th>
+                <th>触发条件</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr><td>MainMenu</td><td>GameStatus.MainMenu</td><td>主菜单界面，等待玩家开始游戏</td><td>游戏启动 / ResetGame()</td></tr>
+            <tr><td>Playing</td><td>GameStatus.Playing</td><td>游戏进行中，玩家可移动和修复节点</td><td>StartGame()</td></tr>
+            <tr><td>ReadyToLaunch</td><td>GameStatus.ReadyToLaunch</td><td>所有节点修复完成，火箭准备发射</td><td>RepairedNodes >= TotalRepairNodes</td></tr>
+            <tr><td>Launching</td><td>GameStatus.Launching</td><td>火箭发射动画进行中</td><td>BeginLaunch()</td></tr>
+            <tr><td>Victory</td><td>GameStatus.Victory</td><td>成功逃离月球，任务完成</td><td>CompleteLaunch() / 快捷键V</td></tr>
+            <tr><td>GameOver</td><td>GameStatus.GameOver</td><td>氧气耗尽，任务失败</td><td>氧气耗尽 / 快捷键G</td></tr>
+        </tbody>
+    </table>
+
+    <script>
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            themeVariables: {
+                primaryColor: '#6366f1',
+                primaryTextColor: '#ffffff',
+                primaryBorderColor: '#ffffff',
+                lineColor: '#6b7280',
+                secondaryColor: '#f3f4f6',
+                tertiaryColor: '#e5e7eb'
+            }
+        });
+    </script>
+</body>
+</html>

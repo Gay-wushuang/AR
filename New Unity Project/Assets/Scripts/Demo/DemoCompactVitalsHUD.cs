@@ -4,12 +4,20 @@ namespace EEGAI.Demo
 {
     public class DemoCompactVitalsHUD : MonoBehaviour
     {
+        private const int TraceSamples = 96;
+
         private DemoEmotionSimulator emotionSimulator;
         private DemoAttentionSystem attentionSystem;
         private DemoMeditationSystem meditationSystem;
         private DemoOxygenSystem oxygenSystem;
         private DemoRepairSystem repairSystem;
         private EmotionPanel emotionPanel;
+
+        private readonly float[] attentionTrace = new float[TraceSamples];
+        private readonly float[] meditationTrace = new float[TraceSamples];
+        private int traceHead;
+        private int traceCount;
+        private float nextTraceSampleTime;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static void Install()
@@ -31,6 +39,25 @@ namespace EEGAI.Demo
             if (oxygenSystem == null) oxygenSystem = FindAnyObjectByType<DemoOxygenSystem>();
             if (repairSystem == null) repairSystem = FindAnyObjectByType<DemoRepairSystem>();
             if (emotionPanel == null) emotionPanel = FindAnyObjectByType<EmotionPanel>();
+
+            SampleTrace();
+        }
+
+        private void SampleTrace()
+        {
+            if (Time.unscaledTime < nextTraceSampleTime)
+            {
+                return;
+            }
+
+            nextTraceSampleTime = Time.unscaledTime + 0.1f;
+            attentionTrace[traceHead] = attentionSystem != null ? attentionSystem.NormalizedAttention : 0f;
+            meditationTrace[traceHead] = meditationSystem != null ? meditationSystem.NormalizedMeditation : 0f;
+            traceHead = (traceHead + 1) % TraceSamples;
+            if (traceCount < TraceSamples)
+            {
+                traceCount++;
+            }
         }
 
         private void OnGUI()
@@ -41,7 +68,7 @@ namespace EEGAI.Demo
             }
 
             float width = Mathf.Min(560f, Screen.width - 36f);
-            Rect rect = new Rect(18f, Screen.height - 202f, width, 180f);
+            Rect rect = new Rect(18f, Screen.height - 232f, width, 210f);
 
             GUI.color = new Color(0f, 0f, 0f, 0.58f);
             GUI.Box(rect, GUIContent.none);
@@ -49,13 +76,116 @@ namespace EEGAI.Demo
 
             GUILayout.BeginArea(rect);
             GUILayout.Space(8);
-            DrawEmotionWave();
+            DrawEegTrace();
             DrawSourceStatus();
-            DrawBar("OXYGEN", oxygenSystem != null ? oxygenSystem.NormalizedOxygen : 1f, new Color(0.28f, 0.95f, 0.8f, 1f));
-            DrawBar("REPAIR", repairSystem != null ? repairSystem.OverallProgress / 100f : 0f, new Color(1f, 0.75f, 0.25f, 1f));
-            DrawBar("ATTENTION", attentionSystem != null ? attentionSystem.NormalizedAttention : 0f, new Color(0.45f, 0.72f, 1f, 1f));
-            DrawBar("MEDITATION", meditationSystem != null ? meditationSystem.NormalizedMeditation : 0f, new Color(0.55f, 1f, 0.55f, 1f));
+
+            bool eegLive = IsEegLive();
+            DrawBar("OXYGEN", oxygenSystem != null ? oxygenSystem.NormalizedOxygen : 1f, new Color(0.28f, 0.95f, 0.8f, 1f), true);
+            DrawBar("REPAIR", repairSystem != null ? repairSystem.OverallProgress / 100f : 0f, new Color(1f, 0.75f, 0.25f, 1f), true);
+            DrawBar("ATTENTION", attentionSystem != null ? attentionSystem.NormalizedAttention : 0f, new Color(0.45f, 0.72f, 1f, 1f), eegLive);
+            DrawBar("MEDITATION", meditationSystem != null ? meditationSystem.NormalizedMeditation : 0f, new Color(0.55f, 1f, 0.55f, 1f), eegLive);
             GUILayout.EndArea();
+        }
+
+        private bool IsEegLive()
+        {
+            if (emotionPanel == null || !emotionPanel.currentDeviceConnected || emotionPanel.MessageAgeSeconds > 3f)
+            {
+                return false;
+            }
+
+            bool attentionLive = attentionSystem == null || attentionSystem.ExternalDataLive;
+            bool meditationLive = meditationSystem == null || meditationSystem.ExternalDataLive;
+            return attentionLive && meditationLive;
+        }
+
+        private void DrawEegTrace()
+        {
+            Rect lineRect = GUILayoutUtility.GetRect(1f, 34f, GUILayout.ExpandWidth(true));
+            bool live = IsEegLive();
+            int[] rawSamples = emotionPanel != null ? EmotionPanel.CurrentRawSamples : null;
+            bool hasRaw = live && rawSamples != null && rawSamples.Length >= 8;
+
+            string mode = !live ? "OFFLINE" : (hasRaw ? "RAW" : "eSense");
+            GUI.Label(new Rect(lineRect.x, lineRect.y + 8f, 100f, 18f), $"EEG {mode}");
+
+            float left = lineRect.x + 112f;
+            float width = lineRect.width - 120f;
+            float top = lineRect.y + 3f;
+            float height = lineRect.height - 6f;
+
+            if (!live)
+            {
+                float middle = top + height * 0.5f;
+                DrawLine(new Vector2(left, middle), new Vector2(left + width, middle),
+                    new Color(1f, 1f, 1f, 0.22f), 1f);
+                GUI.Label(new Rect(left, lineRect.y + 8f, width, 18f), "NO EEG SIGNAL");
+                return;
+            }
+
+            if (hasRaw)
+            {
+                DrawRawTrace(rawSamples, left, top, width, height);
+                return;
+            }
+
+            DrawSeries(attentionTrace, new Color(0.45f, 0.72f, 1f, 0.95f), left, top, width, height);
+            DrawSeries(meditationTrace, new Color(0.55f, 1f, 0.55f, 0.95f), left, top, width, height);
+        }
+
+        private static void DrawRawTrace(int[] samples, float left, float top, float width, float height)
+        {
+            int count = Mathf.Min(TraceSamples, samples.Length);
+            if (count < 2)
+            {
+                return;
+            }
+
+            int start = samples.Length - count;
+            float min = samples[start];
+            float max = samples[start];
+            for (int i = start + 1; i < samples.Length; i++)
+            {
+                min = Mathf.Min(min, samples[i]);
+                max = Mathf.Max(max, samples[i]);
+            }
+
+            float span = Mathf.Max(1f, max - min);
+            Vector2 previous = Vector2.zero;
+            for (int i = 0; i < count; i++)
+            {
+                float value = (samples[start + i] - min) / span;
+                Vector2 point = new Vector2(
+                    left + width * (i / (float)(count - 1)),
+                    top + height * (1f - value));
+                if (i > 0)
+                {
+                    DrawLine(previous, point, new Color(0.95f, 0.75f, 0.25f, 0.95f), 1f);
+                }
+                previous = point;
+            }
+        }
+
+        private void DrawSeries(float[] values, Color color, float left, float top, float width, float height)
+        {
+            if (traceCount < 2)
+            {
+                return;
+            }
+
+            Vector2 previous = Vector2.zero;
+            for (int i = 0; i < traceCount; i++)
+            {
+                int index = (traceHead - traceCount + i + TraceSamples) % TraceSamples;
+                Vector2 point = new Vector2(
+                    left + width * (i / (float)(traceCount - 1)),
+                    top + height * (1f - Mathf.Clamp01(values[index])));
+                if (i > 0)
+                {
+                    DrawLine(previous, point, color, 1.5f);
+                }
+                previous = point;
+            }
         }
 
         private void DrawSourceStatus()
@@ -66,55 +196,40 @@ namespace EEGAI.Demo
                 return;
             }
 
-            string live = emotionPanel.currentDeviceConnected ? "LIVE" : "OFFLINE";
-            GUILayout.Label($"SRC {emotionPanel.currentSource} | {live} | signal {emotionPanel.currentPoorSignal} | eSense {emotionPanel.currentESenseAgeSeconds:F1}s | raw {emotionPanel.currentRawPacketCount} eSense {emotionPanel.currentESensePacketCount}");
-            GUILayout.Label($"RAW {emotionPanel.currentRawEmotion.ToUpperInvariant()} | ATT {emotionPanel.currentAttention} | MED {emotionPanel.currentMeditation}");
-        }
+            bool live = emotionPanel.currentDeviceConnected;
+            string state = live ? (IsEegLive() ? "LIVE" : "STALE") : "OFFLINE";
+            string config = $"{EmotionPanel.CurrentConfigMode}:{EmotionPanel.CurrentConfigPort} v{EmotionPanel.CurrentServerVersion}";
+            bool configOk = DemoEEGServiceLauncher.IsExpectedConfig(
+                EmotionPanel.CurrentConfigMode, EmotionPanel.CurrentConfigPort);
+            string configWarning = configOk ? string.Empty : " (MISMATCH)";
 
-        private void DrawEmotionWave()
-        {
-            string emotion = emotionSimulator != null ? emotionSimulator.GetEmotionString().ToUpperInvariant() : "NORMAL";
-            Rect lineRect = GUILayoutUtility.GetRect(1f, 30f, GUILayout.ExpandWidth(true));
-            GUI.Label(new Rect(lineRect.x, lineRect.y, 94f, lineRect.height), $"EMOTION {emotion}");
-
-            Color color = GetEmotionColor(emotion);
-            float left = lineRect.x + 112f;
-            float width = lineRect.width - 120f;
-            float centerY = lineRect.y + lineRect.height * 0.5f;
-
-            for (int i = 0; i < 64; i++)
+            string emotion = emotionPanel.currentEmotion.ToUpperInvariant();
+            if (live && !EmotionPanel.CurrentInputComplete)
             {
-                float t0 = i / 64f;
-                float t1 = (i + 1) / 64f;
-                float y0 = Mathf.Sin((Time.time * 2.4f + t0 * 8f) * Mathf.PI) * 9f;
-                float y1 = Mathf.Sin((Time.time * 2.4f + t1 * 8f) * Mathf.PI) * 9f;
-                DrawLine(new Vector2(left + width * t0, centerY + y0), new Vector2(left + width * t1, centerY + y1), color, 2f);
+                emotion += " (estimate)";
             }
+
+            GUILayout.Label(
+                $"SRC {emotionPanel.currentSource} | {state} | CFG {config}{configWarning} | " +
+                $"signal {emotionPanel.currentPoorSignal} | eSense {emotionPanel.currentESenseAgeSeconds:F1}s");
+            GUILayout.Label(
+                $"RAW pkt {emotionPanel.currentRawPacketCount} | eSense pkt {emotionPanel.currentESensePacketCount} | " +
+                $"ATT {emotionPanel.currentAttention} | MED {emotionPanel.currentMeditation} | EMO {emotion}");
         }
 
-        private static void DrawBar(string label, float value, Color color)
+        private static void DrawBar(string label, float value, Color color, bool valid)
         {
-            value = Mathf.Clamp01(value);
+            value = valid ? Mathf.Clamp01(value) : 0f;
             Rect row = GUILayoutUtility.GetRect(1f, 22f, GUILayout.ExpandWidth(true));
             GUI.Label(new Rect(row.x, row.y, 94f, row.height), label);
 
             Rect bg = new Rect(row.x + 112f, row.y + 5f, row.width - 172f, 12f);
             GUI.color = new Color(1f, 1f, 1f, 0.16f);
             GUI.DrawTexture(bg, Texture2D.whiteTexture);
-            GUI.color = color;
+            GUI.color = valid ? color : new Color(0.55f, 0.55f, 0.55f, 0.6f);
             GUI.DrawTexture(new Rect(bg.x, bg.y, bg.width * value, bg.height), Texture2D.whiteTexture);
             GUI.color = Color.white;
-            GUI.Label(new Rect(row.x + row.width - 52f, row.y, 50f, row.height), $"{value * 100f:F0}%");
-        }
-
-        private static Color GetEmotionColor(string emotion)
-        {
-            switch (emotion)
-            {
-                case "HAPPY": return new Color(1f, 0.78f, 0.2f, 1f);
-                case "SAD": return new Color(0.35f, 0.55f, 1f, 1f);
-                default: return new Color(0.62f, 1f, 0.62f, 1f);
-            }
+            GUI.Label(new Rect(row.x + row.width - 52f, row.y, 50f, row.height), valid ? $"{value * 100f:F0}%" : "--");
         }
 
         private static void DrawLine(Vector2 start, Vector2 end, Color color, float width)

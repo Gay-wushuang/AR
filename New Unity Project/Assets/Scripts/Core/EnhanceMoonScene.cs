@@ -23,9 +23,6 @@ public class EnhanceMoonScene : MonoBehaviour
     [SerializeField] private float scatterRadius = 40f;
     [SerializeField] private Vector2 rockScaleRange = new Vector2(0.5f, 3f);
 
-    [Header("岩石形状")]
-    [SerializeField] private float rockIrregularity = 0.25f;
-
     [Header("随机种子")]
     [SerializeField] private int randomSeed = 42;
 
