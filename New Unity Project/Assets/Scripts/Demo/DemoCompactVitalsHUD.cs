@@ -5,6 +5,18 @@ namespace EEGAI.Demo
     public class DemoCompactVitalsHUD : MonoBehaviour
     {
         private const int TraceSamples = 96;
+        private static readonly string[] FrequencyBandNames =
+        {
+            "DELTA", "THETA", "ALPHA 1", "ALPHA 2",
+            "BETA 1", "BETA 2", "GAMMA 1", "GAMMA 2"
+        };
+        private static readonly Color[] FrequencyBandColors =
+        {
+            new Color(0.62f, 0.38f, 1f), new Color(0.30f, 0.55f, 1f),
+            new Color(0.12f, 0.82f, 1f), new Color(0.20f, 0.92f, 0.62f),
+            new Color(0.86f, 0.94f, 0.28f), new Color(1f, 0.62f, 0.18f),
+            new Color(1f, 0.32f, 0.28f), new Color(1f, 0.38f, 0.72f)
+        };
 
         private DemoEmotionSimulator emotionSimulator;
         private DemoAttentionSystem attentionSystem;
@@ -68,7 +80,7 @@ namespace EEGAI.Demo
             }
 
             float width = Mathf.Min(560f, Screen.width - 36f);
-            Rect rect = new Rect(18f, Screen.height - 232f, width, 210f);
+            Rect rect = new Rect(18f, Screen.height - 322f, width, 300f);
 
             GUI.color = new Color(0f, 0f, 0f, 0.58f);
             GUI.Box(rect, GUIContent.none);
@@ -84,7 +96,78 @@ namespace EEGAI.Demo
             DrawBar("REPAIR", repairSystem != null ? repairSystem.OverallProgress / 100f : 0f, new Color(1f, 0.75f, 0.25f, 1f), true);
             DrawBar("ATTENTION", attentionSystem != null ? attentionSystem.NormalizedAttention : 0f, new Color(0.45f, 0.72f, 1f, 1f), eegLive);
             DrawBar("MEDITATION", meditationSystem != null ? meditationSystem.NormalizedMeditation : 0f, new Color(0.55f, 1f, 0.55f, 1f), eegLive);
+            DrawFrequencyBands();
             GUILayout.EndArea();
+        }
+
+        private bool HasFreshPowerBands()
+        {
+            return emotionPanel != null && emotionPanel.currentStreamConnected &&
+                emotionPanel.MessageAgeSeconds <= 3f && emotionPanel.currentPowerPacketCount > 0 &&
+                emotionPanel.currentPowerAgeSeconds <= 3f && emotionPanel.currentPowerBands != null &&
+                emotionPanel.currentPowerBands.Length >= FrequencyBandNames.Length;
+        }
+
+        private bool HasLivePowerBands()
+        {
+            return HasFreshPowerBands() && emotionPanel.currentDeviceConnected &&
+                emotionPanel.currentPoorSignal < 200;
+        }
+
+        private void DrawFrequencyBands()
+        {
+            bool live = HasLivePowerBands();
+            bool fresh = HasFreshPowerBands();
+            GUILayout.Space(3f);
+            Rect title = GUILayoutUtility.GetRect(1f, 18f, GUILayout.ExpandWidth(true));
+            string titleText = live
+                ? "EEG SPECTRUM  |  RELATIVE ASIC BAND POWER"
+                : fresh
+                    ? $"EEG SPECTRUM  |  POOR SIGNAL ({emotionPanel.currentPoorSignal}); CHECK HEADSET CONTACT"
+                    : "EEG SPECTRUM  |  WAITING FOR BAND DATA";
+            GUI.Label(title, titleText);
+
+            Rect grid = GUILayoutUtility.GetRect(1f, 62f, GUILayout.ExpandWidth(true));
+            int[] powers = live ? emotionPanel.currentPowerBands : null;
+            long total = 0;
+            int maximum = 0;
+            if (powers != null)
+            {
+                for (int i = 0; i < FrequencyBandNames.Length; i++)
+                {
+                    int power = Mathf.Max(0, powers[i]);
+                    total += power;
+                    maximum = Mathf.Max(maximum, power);
+                }
+            }
+
+            float cellWidth = grid.width * 0.25f;
+            float rowHeight = grid.height * 0.5f;
+            for (int i = 0; i < FrequencyBandNames.Length; i++)
+            {
+                int column = i % 4;
+                int row = i / 4;
+                Rect cell = new Rect(grid.x + column * cellWidth + 2f, grid.y + row * rowHeight + 1f,
+                    cellWidth - 4f, rowHeight - 2f);
+                Color bandColor = FrequencyBandColors[i];
+                GUI.color = new Color(1f, 1f, 1f, 0.10f);
+                GUI.DrawTexture(cell, Texture2D.whiteTexture);
+
+                float relativePower = live && maximum > 0
+                    ? Mathf.Sqrt(Mathf.Max(0, powers[i]) / (float)maximum)
+                    : 0f;
+                float share = live && total > 0 ? Mathf.Max(0, powers[i]) / (float)total : 0f;
+                Rect bar = new Rect(cell.x + 5f, cell.y + 18f, cell.width - 10f, 7f);
+                GUI.color = new Color(bandColor.r, bandColor.g, bandColor.b, live ? 0.24f : 0.10f);
+                GUI.DrawTexture(bar, Texture2D.whiteTexture);
+                GUI.color = new Color(bandColor.r, bandColor.g, bandColor.b,
+                    live ? 0.35f + 0.65f * relativePower : 0.12f);
+                GUI.DrawTexture(new Rect(bar.x, bar.y, bar.width * relativePower, bar.height), Texture2D.whiteTexture);
+                GUI.color = live ? Color.white : new Color(0.7f, 0.7f, 0.7f, 0.7f);
+                GUI.Label(new Rect(cell.x + 5f, cell.y + 1f, cell.width - 10f, 16f),
+                    live ? $"{FrequencyBandNames[i]}  {share * 100f:F0}%" : FrequencyBandNames[i]);
+            }
+            GUI.color = Color.white;
         }
 
         private bool IsEegLive()

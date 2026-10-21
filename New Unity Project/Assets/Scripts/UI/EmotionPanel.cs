@@ -31,6 +31,7 @@ public class EmotionPanel : MonoBehaviour
     public int currentRawPacketCount = 0;
     public int currentESensePacketCount = 0;
     public int currentPowerPacketCount = 0;
+    [System.NonSerialized] public int[] currentPowerBands = System.Array.Empty<int>();
 
     // Runtime-only state. Kept static so adding it does not change the
     // serialization layout of this scene component.
@@ -216,6 +217,7 @@ public class EmotionPanel : MonoBehaviour
             currentRawPacketCount = emotionData.raw_packet_count;
             currentESensePacketCount = emotionData.esense_packet_count;
             currentPowerPacketCount = emotionData.power_packet_count;
+            currentPowerBands = emotionData.power_bands ?? System.Array.Empty<int>();
             CurrentRawSamples = emotionData.raw_samples ?? System.Array.Empty<int>();
             CurrentConfigMode = string.IsNullOrEmpty(emotionData.config_mode) ? "unknown" : emotionData.config_mode;
             CurrentConfigPort = string.IsNullOrEmpty(emotionData.config_port) ? string.Empty : emotionData.config_port;
@@ -540,6 +542,7 @@ public class EmotionPanel : MonoBehaviour
         public int raw_packet_count;
         public int esense_packet_count;
         public int power_packet_count;
+        public int[] power_bands;
         public int[] raw_samples;
         public string config_mode;
         public string config_port;
